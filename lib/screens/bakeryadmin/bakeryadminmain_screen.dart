@@ -1,9 +1,10 @@
-import 'package:bakeryprojectapp/models/UserModel.dart';
+import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadmindistribution_screen.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminproduction/bakeryadminproduction_screen.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminservicereports/bakeryadminregion_screen.dart';
 import 'package:bakeryprojectapp/screens/bakerylogin_screen.dart';
 import 'package:bakeryprojectapp/services/UserServices.dart';
+import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class BakeryAdminScreen extends StatefulWidget {
 
 class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
     final FirebaseAuth _auth = FirebaseAuth.instance;
+    final RegionService _regionService=RegionService();
   Future<void> _signOut() async {
     await _auth.signOut();
     Navigator.pushAndRemoveUntil(
@@ -27,6 +29,12 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
           builder: (context) => BakeryLoginScreen(),
         ),
         (route) => false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+   print(widget.userModel.rolsId);
   }
   @override
   Widget build(BuildContext context) {
@@ -50,7 +58,7 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => BakeryAdminRegionScreen(),
+                            builder: (context) => BakeryAdminRegionScreen(userModel: widget.userModel,),
                           )),
                       child: Text(
                         "Servis Raporu",
@@ -108,7 +116,7 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      print("tıklandı");
+                       _regionService.fetchRegions(widget.userModel.rolsId);
                     },
                     child: Container(
                         alignment: Alignment.bottomRight,
