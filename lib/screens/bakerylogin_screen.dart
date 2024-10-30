@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:bakeryprojectapp/models/UserModel.dart';
+import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminmain_screen.dart';
 import 'package:bakeryprojectapp/services/UserServices.dart';
 import 'package:flutter/material.dart';
