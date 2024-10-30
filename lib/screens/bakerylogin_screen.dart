@@ -1,9 +1,11 @@
 import 'dart:ui';
 
-import 'package:bakeryprojectapp/models/usermodel.dart';
+import 'package:bakeryprojectapp/homepage.dart';
+import 'package:bakeryprojectapp/models/UserModel.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminmain_screen.dart';
 import 'package:bakeryprojectapp/services/UserServices.dart';
 import 'package:flutter/material.dart';
+
 
 class BakeryLoginScreen extends StatefulWidget {
   const BakeryLoginScreen({
@@ -234,13 +236,25 @@ class _BakeryLoginScreenState extends State<BakeryLoginScreen> {
 
       if (_userModel != null) {
         if (_userModel.pwd == enteredSifre) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BakeryAdminScreen(userModel: _userModel),
-            ),
-            (route) => false,
-          );
+          if (_userModel.roles == "admin") {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BakeryAdminScreen(userModel: _userModel),
+              ),
+              (route) => false,
+            );
+          }
+          else{
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(),
+              ),
+              (route) => false,
+            );
+          }
+          print(_userModel.roles);
         } else {
           _showError("Hatalı Şifre");
         }
