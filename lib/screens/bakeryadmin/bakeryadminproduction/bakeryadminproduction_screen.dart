@@ -1,12 +1,15 @@
-
+import 'package:bakeryprojectapp/models/UserModel.dart';
+import 'package:bakeryprojectapp/models/bakerymodel.dart';
+import 'package:bakeryprojectapp/models/regionmodel.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminproduction/bakeryadminproductionorder_screen.dart';
 import 'package:bakeryprojectapp/services/bakeryservices.dart';
+import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
 import 'package:flutter/material.dart';
 
-
 class BakeryAdminProductionScreen extends StatefulWidget {
-  const BakeryAdminProductionScreen({super.key});
+  final UserModel userModel;
+  const BakeryAdminProductionScreen({super.key,required this.userModel});
 
   @override
   State<BakeryAdminProductionScreen> createState() =>
@@ -15,7 +18,35 @@ class BakeryAdminProductionScreen extends StatefulWidget {
 
 class _BakeryAdminProductionScreenState
     extends State<BakeryAdminProductionScreen> {
-      
+  final BakeryServices _bakeryServices = BakeryServices();
+  final RegionService _regionService = RegionService();
+  List<String> regionNames = []; // Bölge isimlerini tutacak liste
+
+  final String regionName = "Samandıra"; // Örneğin "RegionA"
+  List<BakeryModel> bakeryList = [];
+  @override
+  void initState() {
+    super.initState();
+    fetchBakeryData();
+  }
+
+  Future<void> fetchBakeryData() async {
+    var data = await _bakeryServices.getBakeryData(widget.userModel.rolsId, regionName);
+
+    setState(() {
+      bakeryList = data;
+    });
+  }
+
+   // Verileri çekme ve güncelleme fonksiyonu
+  void fetchRegions() async {
+    List<RegionModel> regions =
+        await _regionService.getRegions(widget.userModel.rolsId);
+    setState(() {
+      regionNames = regions.map((region) => region.regionName).toList();
+    });
+    print(regionNames);
+  }
   // Dinamik sütun başlıkları (Market ve Servis başlıkları)
   final List<String> columns = [
     'FIRIN',
@@ -63,7 +94,6 @@ class _BakeryAdminProductionScreenState
     ['26.10', 'X', "10", "20", "30", "210"],
   ];
   DateTime dateTime = DateTime(2024, 10, 26, 15, 14);
-  BakeryServices _bakeryServices = BakeryServices();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,17 +120,11 @@ class _BakeryAdminProductionScreenState
                   ),
                 );
               }).toList(),
-              rows: rows.map((row) {
-                return DataRow(
-                  cells: row.map((cell) {
-                    return DataCell(
-                      Text(
-                        cell,
-                        textAlign: TextAlign.start,
-                      ),
-                    );
-                  }).toList(),
-                );
+              rows: bakeryList.map((row) {
+                return DataRow(cells: [
+                  DataCell(Text(row.firinIsmi)),
+                  DataCell(Text(row.ekmekFiyati.toString())),
+                ]);
               }).toList(),
             ),
           ),

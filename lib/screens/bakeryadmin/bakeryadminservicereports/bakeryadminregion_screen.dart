@@ -35,7 +35,6 @@ class _BakeryAdminRegionScreenState extends State<BakeryAdminRegionScreen> {
     });
   }
 
-  List region = ["Ümraniye"];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
