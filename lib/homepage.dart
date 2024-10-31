@@ -148,13 +148,14 @@ class _HomePageState extends State<HomePage> {
                       "${widget.userModel.rolsId}",
                       style: TextStyle(color: Colors.white70, fontSize: 16),
                     ),
+                    
                   ],
                 ),
               ),
               ListTile(
                 leading: Icon(Icons.phone),
                 title: Text(
-                  "Telefon: +90 555 555 55 55",
+                  "${widget.userModel.telefonNo}",
                   style: TextStyle(fontSize: 14),
                 ),
               ),
