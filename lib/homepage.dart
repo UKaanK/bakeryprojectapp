@@ -1,4 +1,3 @@
-
 /*
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -96,9 +95,8 @@ import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 class HomePage extends StatefulWidget {
-  final UserModel userModel ;
+  final UserModel userModel;
 
   HomePage({required this.userModel});
   @override
@@ -123,7 +121,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // AppBar'daki varsayılan Drawer simgesini kaldırır
+        automaticallyImplyLeading:
+            false, // AppBar'daki varsayılan Drawer simgesini kaldırır
         title: Text('Ana Sayfa', style: TextStyle(fontSize: 30)),
       ),
       drawer: Drawer(
@@ -136,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.symmetric(vertical: 30, horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [          
+                  children: [
                     SizedBox(height: 10),
                     Text(
                       "${widget.userModel.name}",
