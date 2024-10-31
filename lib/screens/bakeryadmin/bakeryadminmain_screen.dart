@@ -4,6 +4,7 @@ import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadmindistribution_scr
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminproduction/bakeryadminproduction_screen.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminservicereports/bakeryadminregion_screen.dart';
 import 'package:bakeryprojectapp/screens/bakerylogin_screen.dart';
+import 'package:bakeryprojectapp/services/bakeryservices.dart';
 import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +23,7 @@ class BakeryAdminScreen extends StatefulWidget {
 class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     final RegionService _regionService=RegionService();
+    final BakeryServices _bakeryServices = BakeryServices();
   Future<void> _signOut() async {
     await _auth.signOut();
     Navigator.pushAndRemoveUntil(
@@ -117,7 +119,7 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                       _regionService.fetchRegions(widget.userModel.rolsId);
+                       _regionService.printRegionNames(widget.userModel.rolsId);
                     },
                     child: Container(
                         alignment: Alignment.bottomRight,

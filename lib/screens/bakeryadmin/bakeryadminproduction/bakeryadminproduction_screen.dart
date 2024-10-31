@@ -1,5 +1,6 @@
 
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminproduction/bakeryadminproductionorder_screen.dart';
+import 'package:bakeryprojectapp/services/bakeryservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,7 @@ class BakeryAdminProductionScreen extends StatefulWidget {
 
 class _BakeryAdminProductionScreenState
     extends State<BakeryAdminProductionScreen> {
+      
   // Dinamik sütun başlıkları (Market ve Servis başlıkları)
   final List<String> columns = [
     'FIRIN',
@@ -61,6 +63,7 @@ class _BakeryAdminProductionScreenState
     ['26.10', 'X', "10", "20", "30", "210"],
   ];
   DateTime dateTime = DateTime(2024, 10, 26, 15, 14);
+  BakeryServices _bakeryServices = BakeryServices();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
