@@ -249,7 +249,7 @@ class _BakeryLoginScreenState extends State<BakeryLoginScreen> {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => HomePage(),
+                builder: (context) => HomePage(userModel: _userModel,),
               ),
               (route) => false,
             );

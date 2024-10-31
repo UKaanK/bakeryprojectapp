@@ -88,6 +88,7 @@ class _HomePageState extends State<HomePage> {
 */
 
 import 'package:bakeryprojectapp/gider.dart';
+import 'package:bakeryprojectapp/models/UserModel.dart';
 import 'package:bakeryprojectapp/rapor.dart';
 import 'package:bakeryprojectapp/screens/bakerylogin_screen.dart';
 import 'package:bakeryprojectapp/servis.dart';
@@ -97,6 +98,9 @@ import 'package:flutter/material.dart';
 
 
 class HomePage extends StatefulWidget {
+  final UserModel userModel ;
+
+  HomePage({required this.userModel});
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -135,14 +139,14 @@ class _HomePageState extends State<HomePage> {
                   children: [          
                     SizedBox(height: 10),
                     Text(
-                      "John Doe",
+                      "${widget.userModel.name}",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "johndoe@example.com",
+                      "${widget.userModel.rolsId}",
                       style: TextStyle(color: Colors.white70, fontSize: 16),
                     ),
                   ],
