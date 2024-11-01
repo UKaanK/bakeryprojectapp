@@ -35,12 +35,8 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
   void initState() {
     super.initState();
     print(widget.userModel.rolsId);
-    
   }
 
-
-
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +79,9 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => BakeryAdminProductionScreen(userModel: widget.userModel,),
+                            builder: (context) => BakeryAdminProductionScreen(
+                              userModel: widget.userModel,
+                            ),
                           )),
                       child: Container(
                         width: MediaQuery.of(context).size.width / 1.2,

@@ -5,7 +5,8 @@ class BakeryServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Belirli bir rol ve bölge altındaki tüm fırınları al
-  Future<List<BakeryModel>> getAllBakeries(String rolsId, String regionName) async {
+  Future<List<BakeryModel>> getAllBakeries(
+      String rolsId, String regionName) async {
     try {
       var querySnapshot = await _firestore
           .collection('rols')
@@ -30,7 +31,8 @@ class BakeryServices {
   }
 
   // Belirli bir fırın verisini almak için
-   Future<List<BakeryModel>> getBakeryData(String rolsId, String regionName) async {
+  Future<List<BakeryModel>> getBakeryData(
+      String rolsId, String regionName) async {
     try {
       var querySnapshot = await _firestore
           .collection('rols')
@@ -53,8 +55,6 @@ class BakeryServices {
     }
   }
 
-  
-
   // Tüm fırınları çek ve konsolda göster
   void fetchBakeries(String rolsId, String regionName) async {
     List<BakeryModel> bakeries = await getAllBakeries(rolsId, regionName);
@@ -63,5 +63,4 @@ class BakeryServices {
       print("Fırın: ${bakery.firinIsmi}");
     }
   }
-  
 }
