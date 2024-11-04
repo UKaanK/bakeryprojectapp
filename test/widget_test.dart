@@ -8,12 +8,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+<<<<<<<<< Temporary merge branch 1
 
-
-
-
-
-
+=========
+>>>>>>>>> Temporary merge branch 2
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

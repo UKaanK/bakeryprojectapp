@@ -30,28 +30,30 @@ class BakeryServices {
   }
 
   // Belirli bir fırın verisini almak için
-  Future<BakeryModel?> getBakeryData(String rolsId, String regionName, String bakeryId) async {
+   Future<List<BakeryModel>> getBakeryData(String rolsId, String regionName) async {
     try {
-      var snapshot = await _firestore
+      var querySnapshot = await _firestore
           .collection('rols')
           .doc(rolsId)
           .collection('region')
           .doc(regionName)
           .collection('bakery')
-          .doc(bakeryId)
           .get();
 
-      if (snapshot.exists) {
-        print("Fırın verisi: ${snapshot.data()}");
-        return BakeryModel.fromJson(snapshot.data()!);
-      } else {
-        print("Fırın verisi bulunamadı: $bakeryId");
-      }
+      print("Alınan belge sayısı: ${querySnapshot.docs.length}");
+
+      List<BakeryModel> bakeryList = querySnapshot.docs.map((doc) {
+        return BakeryModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+
+      return bakeryList;
     } catch (e) {
-      print("Fırın verisi alınırken hata oluştu: $e");
+      print("Bakery verileri alınırken hata oluştu: $e");
+      return [];
     }
-    return null;
   }
+
+  
 
   // Tüm fırınları çek ve konsolda göster
   void fetchBakeries(String rolsId, String regionName) async {
@@ -61,4 +63,5 @@ class BakeryServices {
       print("Fırın: ${bakery.firinIsmi}");
     }
   }
+  
 }

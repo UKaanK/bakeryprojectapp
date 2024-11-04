@@ -26,6 +26,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
     super.initState();
     fetchRegionData();
   }
+  
 void fetchRegionData() async {
   RegionModel? regionData = await _regionService.getRegionData(widget.rolsId, widget.regionId);
 
