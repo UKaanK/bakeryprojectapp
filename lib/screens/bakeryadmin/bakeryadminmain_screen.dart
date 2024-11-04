@@ -1,5 +1,4 @@
-import 'package:bakeryprojectapp/models/UserModel.dart';
-import 'package:bakeryprojectapp/models/regionmodel.dart';
+import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadmindistribution_screen.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminproduction/bakeryadminproduction_screen.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminservicereports/bakeryadminregion_screen.dart';
@@ -8,7 +7,6 @@ import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class BakeryAdminScreen extends StatefulWidget {
   final UserModel userModel;
@@ -100,7 +98,7 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BakeryAdminDistributionScreen(),
+                          builder: (context) => BakeryAdminDistributionScreen(userModel:widget.userModel),
                         )),
                     child: Container(
                       width: MediaQuery.of(context).size.width / 1.2,

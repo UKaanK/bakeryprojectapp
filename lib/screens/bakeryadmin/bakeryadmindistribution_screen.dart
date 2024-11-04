@@ -1,79 +1,240 @@
+import 'package:bakeryprojectapp/models/bakerymodel.dart';
+import 'package:bakeryprojectapp/models/usermodel.dart';
+import 'package:bakeryprojectapp/services/bakeryservices.dart';
+import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
 import 'package:flutter/material.dart';
-
+import 'package:bakeryprojectapp/models/regionmodel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class BakeryAdminDistributionScreen extends StatefulWidget {
-  const BakeryAdminDistributionScreen({super.key});
+  final UserModel userModel;
+  const BakeryAdminDistributionScreen({super.key, required this.userModel});
 
   @override
-  State<BakeryAdminDistributionScreen> createState() => _BakeryAdminDistributionScreenState();
+  State<BakeryAdminDistributionScreen> createState() =>
+      _BakeryAdminDistributionScreenState();
 }
 
-class _BakeryAdminDistributionScreenState extends State<BakeryAdminDistributionScreen> {
-  // Bölge listesi
-  List<String> region = ["Ümraniye", "Çekmeköy", "Sultanbeyli", "Samandıra"];
-  DateTime dateTime = DateTime(2024, 10, 26, 15, 14);
+class _BakeryAdminDistributionScreenState
+    extends State<BakeryAdminDistributionScreen> {
+  final BakeryServices _bakeryServices = BakeryServices();
+  List<BakeryModel> bakeryList = [];
+  List<String> firinbaslik = [];
+  List<List<String>> firinsatir = [];
 
-  // Dinamik sütun başlıkları
-  final List<String> firinbaslik = [
-    '1.F',
-    '2.F',
-    '3.F',
-    '4.F',
-    'Toplam',
-  ];
+  late Future<void> _bakeryDataFuture;
+  DateTime selectedDate = DateTime.now();
+  double ortalamaEkmek = 0.0;
 
-  // Dinamik satır verileri
-  final List<List<String>> firinsatir = [
-    ['10', '20', '30', '210'],
-    ['10', '20', '30', '210'],
-    ['10', '20', '30', '210'],
-    ['10', '20', '30', '210'],
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _bakeryDataFuture = fetchBakeryData();
+  }
+
+  Future<List<BakeryModel>> fetchBakeryData() async {
+    try {
+      var bakeries =
+          await _bakeryServices.getAllBakeries(widget.userModel.rolsId);
+
+      if (bakeries == null || bakeries.isEmpty) {
+        throw Exception("Fırın verileri bulunamadı.");
+      }
+
+      setState(() {
+        bakeryList = bakeries;
+        firinbaslik = ['Tarih'];
+        for (var bakery in bakeryList) {
+          firinbaslik.add(bakery.firinIsmi);
+        }
+
+        updateTableData();
+      });
+      return bakeries;
+    } catch (e) {
+      print("Hata: $e");
+      return [];
+    }
+  }
+
+  void updateTableData() {
+    firinsatir.clear();
+
+    // Seçilen tarihten itibaren 4 haftalık veriyi hesapla ve tabloya ekle
+    for (int i = 0; i < 4; i++) {
+      DateTime date = selectedDate.subtract(Duration(days: i * 7));
+      String formattedDate = DateFormat('dd.MM.yyyy').format(date);
+
+      // Tarih satırı ile başlayıp, ekmek sayılarını ekliyoruz
+      List<String> row = [formattedDate];
+      for (var bakery in bakeryList) {
+        var serviceData = bakery.getEkmekSayisiByDate(formattedDate);
+        if (serviceData != null && serviceData.containsKey('ekmek_sayisi')) {
+          row.add(serviceData['ekmek_sayisi'].toString());
+        } else {
+          row.add('-');
+        }
+      }
+
+      // Başlık sayısıyla eşleşecek şekilde satır uzunluğunu kontrol et
+      while (row.length < firinbaslik.length) {
+        row.add('-'); // Eksik hücreleri doldurmak için boş değer ekleyin
+      }
+
+      firinsatir.add(row);
+    }
+
+    // Son bir haftalık ortalama ekmek sayısını hesapla
+    ortalamaEkmek = calculateWeeklyAverage();
+    // Ortalamayı gösteren bir yer ekleyelim (örneğin bir değişken ya da ekranda bir metin)
+    print("Son bir haftalık ortalama ekmek sayısı: $ortalamaEkmek");
+  }
+
+  double calculateWeeklyAverage() {
+    double totalEkmekSayisi = 0.0;
+    double totalDevirEkmekSayisi = 0.0;
+
+    // Son 1 haftanın toplam ekmek sayısını ve devir ekmek sayısını hesapla
+    for (int day = 0; day < 7; day++) {
+      DateTime date = selectedDate.subtract(Duration(days: day));
+      String formattedDate = DateFormat('dd.MM.yyyy').format(date);
+
+      for (var bakery in bakeryList) {
+        var serviceData = bakery.getEkmekSayisiByDate(formattedDate);
+        if (serviceData != null) {
+          if (serviceData.containsKey('ekmek_sayisi')) {
+            totalEkmekSayisi += serviceData['ekmek_sayisi']!.toDouble();
+          }
+          if (serviceData.containsKey('devir_ekmek_sayisi')) {
+            totalDevirEkmekSayisi +=
+                serviceData['devir_ekmek_sayisi']!.toDouble();
+          }
+        }
+      }
+    }
+
+    // Haftalık farkı hesapla
+    var difference = totalEkmekSayisi - totalDevirEkmekSayisi;
+
+    // Farkı 7'ye bölerek ortalamayı hesapla
+    var averageDifference = difference / 7;
+
+    return averageDifference;
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        updateTableData();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: bakeryappbar(
         centerTitle: true,
-        title: Text(
-          "${dateTime.day.toString()}.${dateTime.month.toString()}.${dateTime.year.toString()}",
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Seçilen Tarih: ${DateFormat('dd.MM.yyyy').format(selectedDate)}",
+              style: TextStyle(fontSize: 14),
+            ),
+            IconButton(
+              icon: Icon(Icons.calendar_today),
+              onPressed: () => _selectDate(context),
+            ),
+          ],
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            alignment: Alignment.center,
-            child: DataTable(
-              border: TableBorder.all(width: 2),
-              columnSpacing: 20.0,
-              columns: region.map((column) {
-                return DataColumn(
-                  label: Text(
-                    column,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+      body: FutureBuilder(
+        future: _bakeryDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Bir hata oluştu: ${snapshot.error}"));
+          } else if (!snapshot.hasData) {
+            return Center(child: Text("Veri bulunamadı."));
+          } else {
+            List<BakeryModel> bakeryList = snapshot.data as List<BakeryModel>;
+
+            return Column(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 3,
+                  child: DataTable(
+                    columns: [
+                      DataColumn(
+                          label: Text('FIRIN',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                      DataColumn(
+                          label: Text('EKMEK',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                      DataColumn(
+                          label: Text('Devir Ekmek Sayısı',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                    ],
+                    rows: bakeryList.map((bakery) {
+                      var serviceData = bakery.getEkmekSayisiByDate(
+                          DateFormat('dd.MM.yyyy').format(selectedDate));
+                      return DataRow(cells: [
+                        DataCell(Text(bakery.firinIsmi)),
+                        DataCell(Text(serviceData['ekmek_sayisi'].toString())),
+                        DataCell(
+                            Text(serviceData['devir_ekmek_sayisi'].toString())),
+                      ]);
+                    }).toList(),
+                  ),
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 3,
+                    child: DataTable(
+                      border: TableBorder.all(width: 2),
+                      columns: firinbaslik.map((column) {
+                        return DataColumn(
+                          label: Text(
+                            column,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
+                          ),
+                        );
+                      }).toList(),
+                      rows: firinsatir.map((row) {
+                        return DataRow(
+                          cells: row.map((cell) {
+                            return DataCell(
+                              Text(
+                                cell,
+                                textAlign: TextAlign.start,
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }).toList(),
                     ),
                   ),
-                );
-              }).toList(),
-              rows: firinsatir.map((row) {
-                return DataRow(
-                  cells: row.map((cell) {
-                    return DataCell(
-                      Text(
-                        cell,
-                        textAlign: TextAlign.start,
-                      ),
-                    );
-                  }).toList(),
-                );
-              }).toList(),
-            ),
-          ),
-        ],
+                ),
+              ],
+            );
+          }
+        },
       ),
     );
   }

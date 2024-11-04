@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
 */
 
 import 'package:bakeryprojectapp/gider.dart';
-import 'package:bakeryprojectapp/models/UserModel.dart';
+import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/rapor.dart';
 import 'package:bakeryprojectapp/screens/bakerylogin_screen.dart';
 import 'package:bakeryprojectapp/servis.dart';

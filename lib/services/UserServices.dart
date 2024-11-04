@@ -1,4 +1,4 @@
-import 'package:bakeryprojectapp/models/UserModel.dart';
+import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
