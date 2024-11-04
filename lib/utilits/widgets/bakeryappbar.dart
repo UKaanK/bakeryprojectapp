@@ -11,15 +11,16 @@ class bakeryappbar extends StatelessWidget implements PreferredSizeWidget{
     return AppBar(
       title: title,
       centerTitle: centerTitle,
+      titleTextStyle: const TextStyle(fontSize: 30 , color: Colors.black),
       leading: GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: Icon(
-            Icons.arrow_back_rounded,
-            size: 40,
+          child: const Icon(
+            Icons.arrow_back_ios,
+            size: 30,
             color: Colors.blue,
           )),
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.white,
+      
     );
   }
   

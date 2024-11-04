@@ -168,16 +168,6 @@ class _HomePageState extends State<HomePage> {
               ),
               Divider(),
               ListTile(
-                leading: Icon(Icons.settings),
-                title: Text(
-                  "Ayarlar",
-                  style: TextStyle(fontSize: 16),
-                ),
-                onTap: () {
-                  // Ayarlar sayfasına yönlendirme kodu
-                },
-              ),
-              ListTile(
                 leading: Icon(Icons.logout),
                 title: Text(
                   "Çıkış Yap",
