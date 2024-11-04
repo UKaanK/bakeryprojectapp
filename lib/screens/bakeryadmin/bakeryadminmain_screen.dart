@@ -38,122 +38,142 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
     print(widget.userModel.rolsId);
   }
 
-
-
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        automaticallyImplyLeading:
+            false, // AppBar'daki varsayılan Drawer simgesini kaldırır
+        title: Text('Ana Sayfa', style: TextStyle(fontSize: 30)),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
+      drawer: Drawer(
+        child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width / 1.2,
-                    height: MediaQuery.of(context).size.height / 11,
-                    color: Colors.blue,
-                    child: GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BakeryAdminRegionScreen(
-                              userModel: widget.userModel,
-                            ),
-                          )),
-                      child: Text(
-                        "Servis Raporu",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 40,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
+              Container(
+                width: double.infinity,
+                color: Colors.blue,
+                padding: EdgeInsets.symmetric(vertical: 30, horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10),
+                    Text(
+                      "${widget.userModel.name}",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8),
-                    child: GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BakeryAdminProductionScreen(
-                              userModel: widget.userModel,
-                            ),
-                          )),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 1.2,
-                        height: MediaQuery.of(context).size.height / 11,
-                        color: Colors.blue,
-                        child: Text("Üretim",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 40,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)),
-                      ),
+                    Text(
+                      "${widget.userModel.rolsId}",
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BakeryAdminDistributionScreen(),
-                        )),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 1.2,
-                      height: MediaQuery.of(context).size.height / 11,
-                      color: Colors.blue,
-                      child: Text("Dağıtım",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 40,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                  )
-                ],
+                    
+                  ],
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      _regionService.printRegionNames(widget.userModel.rolsId);
-                    },
-                    child: Container(
-                        alignment: Alignment.bottomRight,
-                        child: Icon(Icons.person_2_outlined,
-                            size: 100, color: Colors.blue)),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      //Çıkış Yap
-                      _signOut();
-                    },
-                    child: Container(
-                        alignment: Alignment.bottomRight,
-                        child: Icon(
-                          Icons.output_outlined,
-                          size: 100,
-                          color: Colors.blue,
-                        )),
-                  )
-                ],
+              ListTile(
+                leading: Icon(Icons.phone),
+                title: Text(
+                  "${widget.userModel.telefonNo}",
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.location_on),
+                title: Text(
+                  "Konum: İstanbul",
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.logout),
+                title: Text(
+                  "Çıkış Yap",
+                  style: TextStyle(fontSize: 16),
+                ),
+                onTap: () {
+                  _signOut();
+                },
               ),
             ],
           ),
         ),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(height: 20),
+          custom_button(context, 'RAPOR',() {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BakeryAdminRegionScreen(
+                              userModel: widget.userModel,
+                            ),),
+            );
+          }),
+          SizedBox(height: 20),
+          custom_button(context, 'ÜRETİM', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BakeryAdminProductionScreen(userModel: widget.userModel,)),
+            );
+          }),
+          SizedBox(height: 20),
+          custom_button(context, 'DAĞITIM', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BakeryAdminDistributionScreen()),
+            );
+          }),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Builder(
+                  builder: (BuildContext context) {
+                    return IconButton(
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                      icon: Icon(Icons.account_circle_outlined),
+                      iconSize: 60,
+                      color: Colors.blue,
+                    );
+                  },
+                ),
+                IconButton(
+                  onPressed: () {
+                    _signOut();
+                  },
+                  icon: Icon(Icons.exit_to_app),
+                  iconSize: 60,
+                  color: Colors.blue,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 
-*/
+
+
+
+
+
+
+
+
+
+
+
+
