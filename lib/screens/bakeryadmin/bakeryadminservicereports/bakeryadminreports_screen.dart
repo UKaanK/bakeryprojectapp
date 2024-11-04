@@ -1,261 +1,260 @@
-import 'package:bakeryprojectapp/models/regionmodel.dart';
-import 'package:bakeryprojectapp/services/regionservices.dart';
-import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
-import 'package:flutter/material.dart';
+// import 'package:bakeryprojectapp/models/regionmodel.dart';
+// import 'package:bakeryprojectapp/services/regionservices.dart';
+// import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
+// import 'package:flutter/material.dart';
 
-class BakeryAdminReportsScreen extends StatefulWidget {
-  final String rolsId;
-  final String regionId;
+// class BakeryAdminReportsScreen extends StatefulWidget {
+//   final String rolsId;
+//   final String regionId;
 
-  const BakeryAdminReportsScreen(
-      {super.key, required this.rolsId, required this.regionId});
+//   const BakeryAdminReportsScreen(
+//       {super.key, required this.rolsId, required this.regionId});
 
-  @override
-  State<BakeryAdminReportsScreen> createState() =>
-      _BakeryAdminReportsScreenState();
-}
+//   @override
+//   State<BakeryAdminReportsScreen> createState() =>
+//       _BakeryAdminReportsScreenState();
+// }
 
-class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
-  final RegionService _regionService = RegionService();
+// class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
+//   final RegionService _regionService = RegionService();
 
-  List<String> columns = ['Market', 'Toplam'];
-  List<List<String>> rows = [];
+//   List<String> columns = ['Market', 'Toplam'];
+//   List<List<String>> rows = [];
   
   
 
-  @override
-  void initState() {
-    super.initState();
-    fetchRegionData();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     fetchRegionData();
+//   }
 
-  void fetchRegionData() async {
-    RegionModel? regionData =
-        await _regionService.getRegionData(widget.rolsId, widget.regionId);
+//   void fetchRegionData() async {
+//     RegionModel? regionData =
+//         await _regionService.getRegionData(widget.rolsId, widget.regionId);
 
-    if (regionData != null) {
-      setState(() {
-        // Servis anahtarlarını bir küme (set) olarak al ve sıralı liste oluştur
-        Set<String> allServiceKeys = {};
-        for (var market in regionData.market) {
-          allServiceKeys.addAll(market.services.keys);
-        }
-        // Anahtarları sıralı bir listeye dönüştür
-        List<String> dynamicColumns = allServiceKeys.toList();
-        dynamicColumns.sort(); // Anahtarları alfabetik sıralama
+//     if (regionData != null) {
+//       setState(() {
+//         // Servis anahtarlarını bir küme (set) olarak al ve sıralı liste oluştur
+//         Set<String> allServiceKeys = {};
+//         for (var market in regionData.market) {
+//           allServiceKeys.addAll(market.services.keys);
+//         }
+//         // Anahtarları sıralı bir listeye dönüştür
+//         List<String> dynamicColumns = allServiceKeys.toList();
+//         dynamicColumns.sort(); // Anahtarları alfabetik sıralama
 
-        columns = ['Market', ...dynamicColumns, 'Toplam'];
+//         columns = ['Market', ...dynamicColumns, 'Toplam'];
 
-        // Satır verilerini ayarla
-        rows = regionData.market.map((market) {
-          List<String> row = [market.name];
-          int rowTotal = 0; // Satır toplamı için değişken
-          for (var col in dynamicColumns) {
-            int value =
-                int.tryParse(market.services[col]?.toString() ?? '0') ?? 0;
-            row.add(value.toString()); // Servis değerlerini al
-            rowTotal += value; // Satır toplamını güncelle
-          }
-          row.add(rowTotal.toString()); // Satır toplamını ekle
-          return row;
-        }).toList();
+//         // Satır verilerini ayarla
+//         rows = regionData.market.map((market) {
+//           List<String> row = [market.name];
+//           int rowTotal = 0; // Satır toplamı için değişken
+//           for (var col in dynamicColumns) {
+//             int value =
+//                 int.tryParse(market.services[col]?.toString() ?? '0') ?? 0;
+//             row.add(value.toString()); // Servis değerlerini al
+//             rowTotal += value; // Satır toplamını güncelle
+//           }
+//           row.add(rowTotal.toString()); // Satır toplamını ekle
+//           return row;
+//         }).toList();
 
-        // Toplam satırını ekle
-        List<String> totalRow = ['Toplam'];
-        for (var col in dynamicColumns) {
-          // Her bir hizmet için toplam hesapla
-          int total = 0;
-          for (var market in regionData.market) {
-            total +=
-                (int.tryParse(market.services[col]?.toString() ?? '0') ?? 0);
-          }
-          totalRow.add(total.toString());
-        }
+//         // Toplam satırını ekle
+//         List<String> totalRow = ['Toplam'];
+//         for (var col in dynamicColumns) {
+//           // Her bir hizmet için toplam hesapla
+//           int total = 0;
+//           for (var market in regionData.market) {
+//             total +=
+//                 (int.tryParse(market.services[col]?.toString() ?? '0') ?? 0);
+//           }
+//           totalRow.add(total.toString());
+//         }
 
-        // Toplam satırına toplam hücresini ekle
-        totalRow.add(rows
-            .fold(0, (sum, row) => sum + (int.tryParse(row.last) ?? 0))
-            .toString()); // Toplam satırının en sağındaki toplam
+//         // Toplam satırına toplam hücresini ekle
+//         totalRow.add(rows
+//             .fold(0, (sum, row) => sum + (int.tryParse(row.last) ?? 0))
+//             .toString()); // Toplam satırının en sağındaki toplam
 
-        // Toplam satırını ekleyin
-        rows.add(totalRow);
-      });
-    }
-  }
+//         // Toplam satırını ekleyin
+//         rows.add(totalRow);
+//       });
+//     }
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: bakeryappbar(),
-      body: Center(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            border: TableBorder.all(width: 2),
-            columnSpacing: 15.0,
-            columns: columns.map((column) {
-              return DataColumn(
-                label: Text(
-                  column,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black),
-                ),
-              );
-            }).toList(),
-            rows: rows.map((row) {
-              return DataRow(
-                cells: row.map((cell) {
-                  return DataCell(
-                    Text(cell, textAlign: TextAlign.start),
-                  );
-                }).toList(),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-*/
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: bakeryappbar(),
+//       body: Center(
+//         child: SingleChildScrollView(
+//           scrollDirection: Axis.horizontal,
+//           child: DataTable(
+//             border: TableBorder.all(width: 2),
+//             columnSpacing: 15.0,
+//             columns: columns.map((column) {
+//               return DataColumn(
+//                 label: Text(
+//                   column,
+//                   style: const TextStyle(
+//                       fontWeight: FontWeight.bold, color: Colors.black),
+//                 ),
+//               );
+//             }).toList(),
+//             rows: rows.map((row) {
+//               return DataRow(
+//                 cells: row.map((cell) {
+//                   return DataCell(
+//                     Text(cell, textAlign: TextAlign.start),
+//                   );
+//                 }).toList(),
+//               );
+//             }).toList(),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 
-/*
-import 'package:bakeryprojectapp/models/regionmodel.dart';
-import 'package:bakeryprojectapp/services/regionservices.dart';
-import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
-import 'package:flutter/material.dart';
 
-class BakeryAdminReportsScreen extends StatefulWidget {
-  final String rolsId;
-  final String regionId;
+// /*
+// import 'package:bakeryprojectapp/models/regionmodel.dart';
+// import 'package:bakeryprojectapp/services/regionservices.dart';
+// import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
+// import 'package:flutter/material.dart';
 
-  const BakeryAdminReportsScreen({super.key, required this.rolsId, required this.regionId});
+// class BakeryAdminReportsScreen extends StatefulWidget {
+//   final String rolsId;
+//   final String regionId;
 
-  @override
-  State<BakeryAdminReportsScreen> createState() => _BakeryAdminReportsScreenState();
-}
+//   const BakeryAdminReportsScreen({super.key, required this.rolsId, required this.regionId});
 
-class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
-  final RegionService _regionService = RegionService();
+//   @override
+//   State<BakeryAdminReportsScreen> createState() => _BakeryAdminReportsScreenState();
+// }
 
-  List<String> columns = ['Market', 'Toplam'];
-  List<List<String>> rows = [];
-  List<String> totalRow = ['Toplam']; // Genel toplam satırı
+// class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
+//   final RegionService _regionService = RegionService();
 
-  @override
-  void initState() {
-    super.initState();
-    fetchRegionData();
-  }
+//   List<String> columns = ['Market', 'Toplam'];
+//   List<List<String>> rows = [];
+//   List<String> totalRow = ['Toplam']; // Genel toplam satırı
 
-  void fetchRegionData() async {
-    RegionModel? regionData = await _regionService.getRegionData(widget.rolsId, widget.regionId);
+//   @override
+//   void initState() {
+//     super.initState();
+//     fetchRegionData();
+//   }
 
-    if (regionData != null) {
-      setState(() {
-        Set<String> allServiceKeys = {};
-        for (var market in regionData.market) {
-          allServiceKeys.addAll(market.services.keys);
-        }
-        List<String> dynamicColumns = allServiceKeys.toList()..sort();
-        columns = ['Market', ...dynamicColumns, 'Toplam'];
+//   void fetchRegionData() async {
+//     RegionModel? regionData = await _regionService.getRegionData(widget.rolsId, widget.regionId);
 
-        rows = regionData.market.map((market) {
-          List<String> row = [market.name];
-          int rowTotal = 0;
-          for (var col in dynamicColumns) {
-            int value = int.tryParse(market.services[col]?.toString() ?? '0') ?? 0;
-            row.add(value.toString());
-            rowTotal += value;
-          }
-          row.add(rowTotal.toString()); // Her market için toplamı ekle
-          return row;
-        }).toList();
+//     if (regionData != null) {
+//       setState(() {
+//         Set<String> allServiceKeys = {};
+//         for (var market in regionData.market) {
+//           allServiceKeys.addAll(market.services.keys);
+//         }
+//         List<String> dynamicColumns = allServiceKeys.toList()..sort();
+//         columns = ['Market', ...dynamicColumns, 'Toplam'];
 
-        // Genel toplam hesaplama
-        totalRow = ['Toplam'];
-        for (var col in dynamicColumns) {
-          int columnTotal = regionData.market.fold(0, (sum, market) {
-            return sum + (int.tryParse(market.services[col]?.toString() ?? '0') ?? 0);
-          });
-          totalRow.add(columnTotal.toString());
-        }
+//         rows = regionData.market.map((market) {
+//           List<String> row = [market.name];
+//           int rowTotal = 0;
+//           for (var col in dynamicColumns) {
+//             int value = int.tryParse(market.services[col]?.toString() ?? '0') ?? 0;
+//             row.add(value.toString());
+//             rowTotal += value;
+//           }
+//           row.add(rowTotal.toString()); // Her market için toplamı ekle
+//           return row;
+//         }).toList();
+
+//         // Genel toplam hesaplama
+//         totalRow = ['Toplam'];
+//         for (var col in dynamicColumns) {
+//           int columnTotal = regionData.market.fold(0, (sum, market) {
+//             return sum + (int.tryParse(market.services[col]?.toString() ?? '0') ?? 0);
+//           });
+//           totalRow.add(columnTotal.toString());
+//         }
         
-        // En sağdaki genel toplamı hesapla
-        int grandTotal = rows.fold(0, (sum, row) => sum + (int.tryParse(row.last) ?? 0));
-        totalRow.add(grandTotal.toString()); // Genel toplamı ekle
+//         // En sağdaki genel toplamı hesapla
+//         int grandTotal = rows.fold(0, (sum, row) => sum + (int.tryParse(row.last) ?? 0));
+//         totalRow.add(grandTotal.toString()); // Genel toplamı ekle
 
-        rows.add(totalRow); // Genel toplam satırını tablonun sonuna ekle
-      });
-    }
-  }
+//         rows.add(totalRow); // Genel toplam satırını tablonun sonuna ekle
+//       });
+//     }
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: bakeryappbar(title: Text(widget.regionId)),
-      body: Center(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            border: TableBorder.all(width: 2, color: Colors.grey.shade300),
-            columnSpacing: 30.0,
-            headingRowColor: WidgetStateProperty.resolveWith((states) => Colors.blueAccent),
-            headingTextStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 18,
-            ),
-            columns: columns.map((column) {
-              return DataColumn(
-                label: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: Text(column),
-                ),
-              );
-            }).toList(),
-            rows: rows.asMap().entries.map((entry) {
-              int index = entry.key;
-              List<String> row = entry.value;
-              return DataRow(
-                color: WidgetStateProperty.resolveWith(
-                  (states) => index == rows.length - 1
-                      ? Colors.lightBlue.shade100 // Genel toplam satırı için farklı renk
-                      : index % 2 == 0
-                          ? Colors.grey.shade100
-                          : Colors.white,
-                ),
-                cells: row.map((cell) {
-                  return DataCell(
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-                      child: Text(
-                        cell,
-                        textAlign: TextAlign.start,
-                        softWrap: true,
-                        overflow: TextOverflow.visible,
-                        maxLines: 3,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: index == rows.length - 1 ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: bakeryappbar(title: Text(widget.regionId)),
+//       body: Center(
+//         child: SingleChildScrollView(
+//           scrollDirection: Axis.horizontal,
+//           child: DataTable(
+//             border: TableBorder.all(width: 2, color: Colors.grey.shade300),
+//             columnSpacing: 30.0,
+//             headingRowColor: WidgetStateProperty.resolveWith((states) => Colors.blueAccent),
+//             headingTextStyle: const TextStyle(
+//               fontWeight: FontWeight.bold,
+//               color: Colors.white,
+//               fontSize: 18,
+//             ),
+//             columns: columns.map((column) {
+//               return DataColumn(
+//                 label: Padding(
+//                   padding: const EdgeInsets.symmetric(vertical: 12.0),
+//                   child: Text(column),
+//                 ),
+//               );
+//             }).toList(),
+//             rows: rows.asMap().entries.map((entry) {
+//               int index = entry.key;
+//               List<String> row = entry.value;
+//               return DataRow(
+//                 color: WidgetStateProperty.resolveWith(
+//                   (states) => index == rows.length - 1
+//                       ? Colors.lightBlue.shade100 // Genel toplam satırı için farklı renk
+//                       : index % 2 == 0
+//                           ? Colors.grey.shade100
+//                           : Colors.white,
+//                 ),
+//                 cells: row.map((cell) {
+//                   return DataCell(
+//                     Padding(
+//                       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+//                       child: Text(
+//                         cell,
+//                         textAlign: TextAlign.start,
+//                         softWrap: true,
+//                         overflow: TextOverflow.visible,
+//                         maxLines: 3,
+//                         style: TextStyle(
+//                           fontSize: 16,
+//                           fontWeight: index == rows.length - 1 ? FontWeight.bold : FontWeight.normal,
+//                         ),
+//                       ),
+//                     ),
+//                   );
+//                 }).toList(),
+//               );
+//             }).toList(),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 
-*/
+
 
 
 
