@@ -148,13 +148,14 @@ class _HomePageState extends State<HomePage> {
                       "${widget.userModel.rolsId}",
                       style: TextStyle(color: Colors.white70, fontSize: 16),
                     ),
+                    
                   ],
                 ),
               ),
               ListTile(
                 leading: Icon(Icons.phone),
                 title: Text(
-                  "Telefon: +90 555 555 55 55",
+                  "${widget.userModel.telefonNo}",
                   style: TextStyle(fontSize: 14),
                 ),
               ),
@@ -166,16 +167,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Divider(),
-              ListTile(
-                leading: Icon(Icons.settings),
-                title: Text(
-                  "Ayarlar",
-                  style: TextStyle(fontSize: 16),
-                ),
-                onTap: () {
-                  // Ayarlar sayfasına yönlendirme kodu
-                },
-              ),
               ListTile(
                 leading: Icon(Icons.logout),
                 title: Text(

@@ -3,6 +3,7 @@ import 'package:bakeryprojectapp/models/regionmodel.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminservicereports/bakeryadminreports_screen.dart';
 import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
+import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:flutter/material.dart';
 
 
@@ -37,45 +38,29 @@ class _BakeryAdminRegionScreenState extends State<BakeryAdminRegionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: bakeryappbar(),
-      body: Center(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width / 1.2,
-          height: MediaQuery.of(context).size.height,
-          child: Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: regionNames.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BakeryAdminReportsScreen(regionId: regionNames[index],rolsId: widget.userModel.rolsId,),
-                        )),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width / 1.2,
-                        height: MediaQuery.of(context).size.height / 11,
-                        color: Colors.blue,
-                        child: Text(
-                          "${regionNames[index]}",
-                          style: TextStyle(
-                              fontSize: 40,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  );
-                },
+      appBar: bakeryappbar(title: Text("Bölgeler"),),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: regionNames.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Column(
+                children: [
+                  customButton2(context, "${regionNames[index]}" , (){
+                     Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BakeryAdminReportsScreen(regionId: regionNames[index],rolsId: widget.userModel.rolsId,),
+                  ),
+                     ); }
+                  ) 
+                ,]
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

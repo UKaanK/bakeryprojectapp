@@ -7,7 +7,7 @@ Widget custom_button(BuildContext context, String text, VoidCallback onPressed) 
     child: ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 78, 169, 243),
+        backgroundColor: Colors.blue,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4.0),
         ),
