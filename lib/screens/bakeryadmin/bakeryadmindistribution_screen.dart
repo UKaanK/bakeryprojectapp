@@ -143,6 +143,7 @@ class _BakeryAdminDistributionScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: bakeryappbar(
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,

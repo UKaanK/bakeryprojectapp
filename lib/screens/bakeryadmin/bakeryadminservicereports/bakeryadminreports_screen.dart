@@ -320,7 +320,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: bakeryappbar(title: Text(widget.regionId)),
+      appBar: bakeryappbar(automaticallyImplyLeading: false,title: Text(widget.regionId)),
       body: Column(
         children: [
           Expanded(

@@ -20,7 +20,8 @@ class _BakeryAdminProductionScreenState
     extends State<BakeryAdminProductionScreen> {
   final BakeryServices _bakeryServices = BakeryServices();
   List<BakeryModel> bakeryList = [];
-  Map<String, List<BakeryModel>> groupedBakeries = {}; // Bölgelere göre gruplama
+  Map<String, List<BakeryModel>> groupedBakeries =
+      {}; // Bölgelere göre gruplama
   String selectedBolge = ''; // Seçilen bölge
   late Future<void> _bakeryDataFuture;
   DateTime selectedDate = DateTime.now();
@@ -79,6 +80,7 @@ class _BakeryAdminProductionScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: bakeryappbar(
+        automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -145,17 +147,21 @@ class _BakeryAdminProductionScreenState
                                   DataRow(
                                     cells: [
                                       DataCell(Text(
-                                        bakery.getEkmekSayisiByDate(
-                                                DateFormat('dd.MM.yyyy')
-                                                    .format(selectedDate))?['ekmek_sayisi']
+                                        bakery
+                                                .getEkmekSayisiByDate(
+                                                    DateFormat('dd.MM.yyyy')
+                                                        .format(selectedDate))?[
+                                                    'ekmek_sayisi']
                                                 ?.toString() ??
                                             '-',
                                         textAlign: TextAlign.start,
                                       )),
                                       DataCell(Text(
-                                        bakery.getEkmekSayisiByDate(
-                                                DateFormat('dd.MM.yyyy')
-                                                    .format(selectedDate))?['devir_ekmek_sayisi']
+                                        bakery
+                                                .getEkmekSayisiByDate(
+                                                    DateFormat('dd.MM.yyyy')
+                                                        .format(selectedDate))?[
+                                                    'devir_ekmek_sayisi']
                                                 ?.toString() ??
                                             '-',
                                         textAlign: TextAlign.start,
@@ -170,7 +176,14 @@ class _BakeryAdminProductionScreenState
                       }).toList(),
                     ),
                   ),
-                  TextButton(onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => BakeryAdminProductionOrderScreen(),)), child: Text("TIKLA"))
+                TextButton(
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              BakeryAdminProductionOrderScreen(),
+                        )),
+                    child: Text("TIKLA"))
               ],
             );
           }

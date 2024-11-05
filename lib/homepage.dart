@@ -121,7 +121,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:bakeryappbar(title: Text("ANASAYFA"),centerTitle: true,),
+      appBar: AppBar(
+        automaticallyImplyLeading:
+            false, // AppBar'daki varsayılan Drawer simgesini kaldırır
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("ANASAYFA"),
+          ],
+        ),
+      ),
       drawer: Drawer(
         child: SingleChildScrollView(
           child: Column(
@@ -145,7 +154,6 @@ class _HomePageState extends State<HomePage> {
                       "${widget.userModel.rolsId}",
                       style: TextStyle(color: Colors.white70, fontSize: 16),
                     ),
-                    
                   ],
                 ),
               ),
@@ -199,7 +207,10 @@ class _HomePageState extends State<HomePage> {
           custom_button(context, 'GİDER', () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => GiderPage()),
+              MaterialPageRoute(
+                  builder: (context) => GiderPage(
+                        userModel: widget.userModel,
+                      )),
             );
           }),
           Spacer(),
