@@ -36,10 +36,7 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
     print(widget.userModel.rolsId);
   }
 
-<<<<<<<<< Temporary merge branch 1
-=========
-  
->>>>>>>>> Temporary merge branch 2
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

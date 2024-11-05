@@ -1,12 +1,9 @@
-<<<<<<<<< Temporary merge branch 1
-=========
 
-/*
->>>>>>>>> Temporary merge branch 2
-import 'package:bakeryprojectapp/models/regionmodel.dart';
-import 'package:bakeryprojectapp/services/regionservices.dart';
-import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
-import 'package:flutter/material.dart';
+
+// import 'package:bakeryprojectapp/models/regionmodel.dart';
+// import 'package:bakeryprojectapp/services/regionservices.dart';
+// import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
+// import 'package:flutter/material.dart';
 
 // class BakeryAdminReportsScreen extends StatefulWidget {
 //   final String rolsId;
@@ -22,6 +19,28 @@ import 'package:flutter/material.dart';
 
 // class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
 //   final RegionService _regionService = RegionService();
+
+
+// import 'package:bakeryprojectapp/models/regionmodel.dart';
+// import 'package:bakeryprojectapp/services/regionservices.dart';
+// import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
+// import 'package:flutter/material.dart';
+
+// class BakeryAdminReportsScreen extends StatefulWidget {
+//   final String rolsId;
+//   final String regionId;
+
+//   const BakeryAdminReportsScreen(
+//       {super.key, required this.rolsId, required this.regionId});
+
+//   @override
+//   State<BakeryAdminReportsScreen> createState() =>
+//       _BakeryAdminReportsScreenState();
+// }
+
+// class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
+//   final RegionService _regionService = RegionService();
+
 
 //   List<String> columns = ['Market', 'Toplam'];
 //   List<List<String>> rows = [];
@@ -88,49 +107,51 @@ import 'package:flutter/material.dart';
 //     }
 //   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: bakeryappbar(),
-      body: Center(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            border: TableBorder.all(width: 2),
-            columnSpacing: 15.0,
-            columns: columns.map((column) {
-              return DataColumn(
-                label: Text(
-                  column,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black),
-                ),
-              );
-            }).toList(),
-            rows: rows.map((row) {
-              return DataRow(
-                cells: row.map((cell) {
-                  return DataCell(
-                    Text(cell, textAlign: TextAlign.start),
-                  );
-                }).toList(),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-*/
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: bakeryappbar(),
+//       body: Center(
+//         child: SingleChildScrollView(
+//           scrollDirection: Axis.horizontal,
+//           child: DataTable(
+//             border: TableBorder.all(width: 2),
+//             columnSpacing: 15.0,
+//             columns: columns.map((column) {
+//               return DataColumn(
+//                 label: Text(
+//                   column,
+//                   style: const TextStyle(
+//                       fontWeight: FontWeight.bold, color: Colors.black),
+//                 ),
+//               );
+//             }).toList(),
+//             rows: rows.map((row) {
+//               return DataRow(
+//                 cells: row.map((cell) {
+//                   return DataCell(
+//                     Text(cell, textAlign: TextAlign.start),
+//                   );
+//                 }).toList(),
+//               );
+//             }).toList(),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 
-/*
-import 'package:bakeryprojectapp/models/regionmodel.dart';
-import 'package:bakeryprojectapp/services/regionservices.dart';
-import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
-import 'package:flutter/material.dart';
+// */
+
+
+
+// /*
+// import 'package:bakeryprojectapp/models/regionmodel.dart';
+// import 'package:bakeryprojectapp/services/regionservices.dart';
+// import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
+// import 'package:flutter/material.dart';
 
 // class BakeryAdminReportsScreen extends StatefulWidget {
 //   final String rolsId;
