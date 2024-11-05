@@ -26,7 +26,27 @@ class RegionService {
       return [];
     }
   }
+// Method to get region names based on rolsId
+  Future<List<String>> getRegionNames(String rolsId) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('rols')
+          .doc(rolsId)
+          .collection("region")
+          .where('rolsId', isEqualTo: rolsId)
+          .get();
 
+      // Extracting the region names from the query result
+      List<String> regionNames = querySnapshot.docs
+          .map((doc) => doc['region_name'] as String)
+          .toList();
+
+      return regionNames;
+    } catch (e) {
+      print("Error fetching region names: $e");
+      return [];
+    }
+  }
   // Tek bir bölgeyi çekmek için
   Future<RegionModel?> getRegionData(String rolsId, String regionId) async {
     try {

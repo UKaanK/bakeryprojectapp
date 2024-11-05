@@ -1,10 +1,9 @@
-import 'package:bakeryprojectapp/models/UserModel.dart';
+import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/models/bakerymodel.dart';
-import 'package:bakeryprojectapp/models/regionmodel.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminproduction/bakeryadminproductionorder_screen.dart';
 import 'package:bakeryprojectapp/services/bakeryservices.dart';
-import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -20,13 +19,11 @@ class BakeryAdminProductionScreen extends StatefulWidget {
 class _BakeryAdminProductionScreenState
     extends State<BakeryAdminProductionScreen> {
   final BakeryServices _bakeryServices = BakeryServices();
-  final RegionService _regionService = RegionService();
   List<BakeryModel> bakeryList = [];
-  List<String> firinbaslik = [];
-  List<List<String>> firinsatir =
-      []; // Satır verilerini dinamik hale getiriyoruz
-
+  Map<String, List<BakeryModel>> groupedBakeries = {}; // Bölgelere göre gruplama
+  String selectedBolge = ''; // Seçilen bölge
   late Future<void> _bakeryDataFuture;
+  DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -38,180 +35,143 @@ class _BakeryAdminProductionScreenState
     try {
       var bakeries =
           await _bakeryServices.getAllBakeries(widget.userModel.rolsId);
-      print("Bakeries: $bakeries");
 
       if (bakeries == null || bakeries.isEmpty) {
         throw Exception("Fırın verileri bulunamadı.");
       }
 
-      String today = DateFormat('dd.MM.yyyy').format(DateTime.now());
-      List<BakeryModel> filteredBakeryData = [];
-
-// firinbaslik listesini güncellemek için fırın isimlerini ekliyoruz
       setState(() {
-        firinbaslik = [
-          'Tarih',
-        ];
-        for (var bakery in bakeries) {
-          firinbaslik.add(bakery.firinIsmi);
-        }
+        bakeryList = bakeries;
+        groupBakeriesByBolge(); // Bölgelere göre gruplama yapılacak
       });
-      for (var bakery in bakeries) {
-        var serviceData = bakery.getEkmekSayisiByDate(today);
-        //  print("Service Data for ${bakery.firinIsmi}: $serviceData");
-
-        if (serviceData != null &&
-            serviceData.containsKey('ekmek_sayisi') &&
-            serviceData.containsKey('devir_ekmek_sayisi')) {
-          filteredBakeryData.add(BakeryModel(
-            firinIsmi: bakery.firinIsmi,
-            servisler: bakery.servisler,
-            // Diğer gerekli alanları ekleyin
-          ));
-          // Satır verisini oluştur
-          firinsatir.add([
-            today, // Tarih
-            bakery.firinIsmi,
-            serviceData['ekmek_sayisi'].toString(),
-            serviceData['devir_ekmek_sayisi'].toString(),
-            ""
-          ]);
-        }
-      }
-
-      print("Filtered Bakery Data: $filteredBakeryData");
-      return filteredBakeryData; // Burada verileri döndürün
+      return bakeries;
     } catch (e) {
       print("Hata: $e");
-      return []; // Hata durumunda boş bir liste döndür
+      return [];
     }
   }
 
-  // Dinamik sütun başlıkları (Market ve Servis başlıkları)
-  final List<String> columns = ['FIRIN', 'EKMEK', 'Devir Ekmek Sayısı'];
+  void groupBakeriesByBolge() {
+    groupedBakeries.clear();
+    for (var bakery in bakeryList) {
+      if (!groupedBakeries.containsKey(bakery.regionName)) {
+        groupedBakeries[bakery.regionName] = [];
+      }
+      groupedBakeries[bakery.regionName]!.add(bakery);
+    }
+  }
 
-  DateTime dateTime = DateTime.now();
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    String tarih =
-        "${dateTime.day.toString()}.${dateTime.month.toString()}.${dateTime.year.toString()}";
     return Scaffold(
       appBar: bakeryappbar(
-        centerTitle: true,
-        title: Text(
-          tarih,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Seçilen Tarih: ${DateFormat('dd.MM.yyyy').format(selectedDate)}",
+              style: TextStyle(fontSize: 14),
+            ),
+            IconButton(
+              icon: Icon(Icons.calendar_today),
+              onPressed: () => _selectDate(context),
+            ),
+          ],
         ),
       ),
       body: FutureBuilder(
-        future: _bakeryDataFuture, // Değişken olarak çağırıyoruz
+        future: _bakeryDataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            print("Hata: ${snapshot.error}");
             return Center(child: Text("Bir hata oluştu: ${snapshot.error}"));
           } else if (!snapshot.hasData) {
             return Center(child: Text("Veri bulunamadı."));
           } else {
-            List<BakeryModel> bakeryList = snapshot.data as List<BakeryModel>;
-            String today = DateFormat('dd.MM.yyyy')
-                .format(DateTime.now()); // Bugünün tarihini alıyoruz
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 50.0),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      alignment: Alignment.center,
-                      child: DataTable(
-                        columns: columns.map((column) {
-                          return DataColumn(
-                            label: Text(column,
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          );
-                        }).toList(),
-                        rows: bakeryList.map((bakery) {
-                          var serviceData = bakery.getEkmekSayisiByDate(today);
-                          return DataRow(cells: [
-                            DataCell(Text(bakery.firinIsmi)),
-                            DataCell(
-                                Text(serviceData['ekmek_sayisi'].toString())),
-                            DataCell(Text(
-                                serviceData['devir_ekmek_sayisi'].toString())),
-                          ]);
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 30.0),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      alignment: Alignment.center,
-                      child: DataTable(
-                        border: TableBorder.all(width: 2),
-                        columnSpacing: 20.0,
-                        columns: firinbaslik.map((column) {
-                          return DataColumn(
-                            label: Text(
-                              column,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
+            return Column(
+              children: [
+                // Bölge seçimi için DropdownButton
+                DropdownButton<String>(
+                  value: selectedBolge.isEmpty ? null : selectedBolge,
+                  hint: Text('Bir bölge seçin'),
+                  items: groupedBakeries.keys.map((String bolge) {
+                    return DropdownMenuItem<String>(
+                      value: bolge,
+                      child: Text(bolge),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedBolge = value ?? '';
+                    });
+                  },
+                ),
+                if (selectedBolge.isNotEmpty)
+                  Expanded(
+                    child: ListView(
+                      children: groupedBakeries[selectedBolge]!.map((bakery) {
+                        return Column(
+                          children: [
+                            Text(
+                              bakery.firinIsmi,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                             ),
-                          );
-                        }).toList(),
-                        rows: firinsatir.map((row) {
-                          return DataRow(
-                            cells: row.map((cell) {
-                              return DataCell(
-                                Text(
-                                  cell,
-                                  textAlign: TextAlign.start,
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        }).toList(),
-                      ),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height / 3,
+                              child: DataTable(
+                                columns: [
+                                  DataColumn(label: Text('Ekmek Sayısı')),
+                                  DataColumn(label: Text('Devir Ekmek Sayısı')),
+                                ],
+                                rows: [
+                                  DataRow(
+                                    cells: [
+                                      DataCell(Text(
+                                        bakery.getEkmekSayisiByDate(
+                                                DateFormat('dd.MM.yyyy')
+                                                    .format(selectedDate))?['ekmek_sayisi']
+                                                ?.toString() ??
+                                            '-',
+                                        textAlign: TextAlign.start,
+                                      )),
+                                      DataCell(Text(
+                                        bakery.getEkmekSayisiByDate(
+                                                DateFormat('dd.MM.yyyy')
+                                                    .format(selectedDate))?['devir_ekmek_sayisi']
+                                                ?.toString() ??
+                                            '-',
+                                        textAlign: TextAlign.start,
+                                      )),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20, top: 20),
-                    child: Text(
-                      "ORT. ÜRETİLMESİ GEREKEN EKMEK:",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width / 1.5,
-                    height: MediaQuery.of(context).size.height / 11,
-                    color: Colors.blue,
-                    child: GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              BakeryAdminProductionOrderScreen(),
-                        ),
-                      ),
-                      child: Text(
-                        "ÜRETİM EMRİ GİR",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25),
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                  TextButton(onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => BakeryAdminProductionOrderScreen(),)), child: Text("TIKLA"))
+              ],
             );
           }
         },

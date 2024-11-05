@@ -478,124 +478,30 @@ class _GiderPageState extends State<GiderPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: 60,
-              child: Row(
-                children: [
-                  Text(
-                    "YAKIT:",
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    flex: 6,
-                    child: TextField(
-                      controller: yakitController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: '0',
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Color.fromARGB(255, 5, 5, 5), width: 2.0),
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: _onYakitGir,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(60, 55),
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                    ),
-                    child: Text(
-                      "GİR",
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (showAdditionalOptions) ...[
-              Padding(
-                padding: EdgeInsets.only(top: 30),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text("DİĞER GİDERLER:", style: TextStyle(fontSize: 24)),
-                      ],
-                    ),
-                    CheckboxListTile(
-                      title: Text("ŞÖFÖR İHTİYACI"),
-                      value: selectedOptions.contains("ŞÖFÖR İHTİYACI"),
-                      onChanged: (bool? value) {
-                        _onOptionSelected("ŞÖFÖR İHTİYACI", value!);
-                      },
-                    ),
-                    CheckboxListTile(
-                      title: Text("ARAÇ İHTİYACI"),
-                      value: selectedOptions.contains("ARAÇ İHTİYACI"),
-                      onChanged: (bool? value) {
-                        _onOptionSelected("ARAÇ İHTİYACI", value!);
-                      },
-                    ),
-                    CheckboxListTile(
-                      title: Text("ARAÇ BAKIMI"),
-                      value: selectedOptions.contains("ARAÇ BAKIMI"),
-                      onChanged: (bool? value) {
-                        _onOptionSelected("ARAÇ BAKIMI", value!);
-                      },
-                    ),
-                    CheckboxListTile(
-                      title: Text("YEMEK"),
-                      value: selectedOptions.contains("YEMEK"),
-                      onChanged: (bool? value) {
-                        _onOptionSelected("YEMEK", value!);
-                      },
-                    ),
-                    CheckboxListTile(
-                      title: Text("DİĞER"),
-                      value: selectedOptions.contains("DİĞER"),
-                      onChanged: (bool? value) {
-                        _onOptionSelected("DİĞER", value!);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            children: [
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: 60,
                 child: Row(
                   children: [
                     Text(
-                      "TUTAR:",
-                      style: TextStyle(fontSize: 20),
+                      "YAKIT:",
+                      style: TextStyle(fontSize: 24),
                     ),
                     SizedBox(width: 10),
                     Expanded(
+                      flex: 6,
                       child: TextField(
-                        controller: tutarController,
+                        controller: yakitController,
                         keyboardType: TextInputType.number,
-                        enabled: selectedOptions.isNotEmpty,
                         decoration: InputDecoration(
                           hintText: '0',
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black, width: 2.0),
+                            borderSide:
+                                BorderSide(color: Color.fromARGB(255, 5, 5, 5), width: 2.0),
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           focusedBorder: OutlineInputBorder(
@@ -605,36 +511,133 @@ class _GiderPageState extends State<GiderPage> {
                         ),
                       ),
                     ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: _onYakitGir,
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(60, 55),
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.0),
+                        ),
+                      ),
+                      child: Text(
+                        "GİR",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              SizedBox(height: 20),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: selectedOptions.isEmpty
-                      ? null
-                      : () {
-                          print("Girilen Tutar: ${tutarController.text}");
-                          print("Seçilen Açıklamalar: $selectedOptions");
+              if (showAdditionalOptions) ...[
+                Padding(
+                  padding: EdgeInsets.only(top: 30),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text("DİĞER GİDERLER:", style: TextStyle(fontSize: 24)),
+                        ],
+                      ),
+                      CheckboxListTile(
+                        title: Text("ŞÖFÖR İHTİYACI"),
+                        value: selectedOptions.contains("ŞÖFÖR İHTİYACI"),
+                        onChanged: (bool? value) {
+                          _onOptionSelected("ŞÖFÖR İHTİYACI", value!);
                         },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: selectedOptions.isEmpty
-                        ? Colors.grey
-                        : Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                  ),
-                  child: Text(
-                    "GİR",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      CheckboxListTile(
+                        title: Text("ARAÇ İHTİYACI"),
+                        value: selectedOptions.contains("ARAÇ İHTİYACI"),
+                        onChanged: (bool? value) {
+                          _onOptionSelected("ARAÇ İHTİYACI", value!);
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text("ARAÇ BAKIMI"),
+                        value: selectedOptions.contains("ARAÇ BAKIMI"),
+                        onChanged: (bool? value) {
+                          _onOptionSelected("ARAÇ BAKIMI", value!);
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text("YEMEK"),
+                        value: selectedOptions.contains("YEMEK"),
+                        onChanged: (bool? value) {
+                          _onOptionSelected("YEMEK", value!);
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text("DİĞER"),
+                        value: selectedOptions.contains("DİĞER"),
+                        onChanged: (bool? value) {
+                          _onOptionSelected("DİĞER", value!);
+                        },
+                      ),
+                    ],
                   ),
                 ),
-              ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: 60,
+                  child: Row(
+                    children: [
+                      Text(
+                        "TUTAR:",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: tutarController,
+                          keyboardType: TextInputType.number,
+                          enabled: selectedOptions.isNotEmpty,
+                          decoration: InputDecoration(
+                            hintText: '0',
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black, width: 2.0),
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: 55,
+                  child: ElevatedButton(
+                    onPressed: selectedOptions.isEmpty
+                        ? null
+                        : () {
+                            print("Girilen Tutar: ${tutarController.text}");
+                            print("Seçilen Açıklamalar: $selectedOptions");
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: selectedOptions.isEmpty
+                          ? Colors.grey
+                          : Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                    ),
+                    child: Text(
+                      "GİR",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

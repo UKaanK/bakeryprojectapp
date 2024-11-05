@@ -196,9 +196,6 @@ class _BakeryAdminProductionOrderScreenState
                               width: screenWidth * 0.25,
                               child: TextField(
                                 keyboardType: TextInputType.number,
-                                controller: TextEditingController(
-                                  text: firinsatir[index][1],
-                                ),
                                 onChanged: (value) {
                                   setState(() {
                                     firinsatir[index][1] = value;

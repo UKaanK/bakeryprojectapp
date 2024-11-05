@@ -1,5 +1,4 @@
-
-import 'package:bakeryprojectapp/models/UserModel.dart';
+import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/models/regionmodel.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminservicereports/bakeryadminreports_screen.dart';
 import 'package:bakeryprojectapp/services/regionservices.dart';
@@ -39,7 +38,7 @@ class _BakeryAdminRegionScreenState extends State<BakeryAdminRegionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: bakeryappbar(title: Text("Bölgeler"),),
+      appBar: bakeryappbar(title: Text("Bölgeler"),centerTitle: true,),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ListView.builder(
