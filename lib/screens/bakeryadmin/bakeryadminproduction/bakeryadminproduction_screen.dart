@@ -575,9 +575,9 @@ class _BakeryAdminProductionScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: bakeryappbar(
+      appBar: AppBar(
         title: Text("Üretim Ekranı"),
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
       ),
       body: Stack(
         children: [

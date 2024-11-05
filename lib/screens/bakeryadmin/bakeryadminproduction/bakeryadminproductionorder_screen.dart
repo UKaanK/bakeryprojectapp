@@ -146,7 +146,7 @@ class _BakeryAdminProductionOrderScreenState
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: bakeryappbar(automaticallyImplyLeading: false,
+      appBar: AppBar(
         title: Text(
             "${dateTime.day.toString()}.${dateTime.month.toString()}.${dateTime.year.toString()}"),
         centerTitle: true,
