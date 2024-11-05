@@ -91,6 +91,7 @@ import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/rapor.dart';
 import 'package:bakeryprojectapp/screens/bakerylogin_screen.dart';
 import 'package:bakeryprojectapp/servis.dart';
+import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
 import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -120,11 +121,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading:
-            false, // AppBar'daki varsayılan Drawer simgesini kaldırır
-        title: Text('Ana Sayfa', style: TextStyle(fontSize: 30)),
-      ),
+      appBar:bakeryappbar(title: Text("ANASAYFA"),centerTitle: true,),
       drawer: Drawer(
         child: SingleChildScrollView(
           child: Column(

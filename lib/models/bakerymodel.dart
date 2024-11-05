@@ -1,10 +1,12 @@
 class BakeryModel {
   String firinIsmi; // Fırın adı
+  String regionName;
   List<BakeryService> servisler; // Servis verileri
 
   BakeryModel({
     required this.firinIsmi,
     required this.servisler,
+    required this.regionName
   });
 
   // Firestore'dan gelen JSON verisini BakeryModel nesnesine dönüştürme
@@ -15,6 +17,7 @@ class BakeryModel {
             return BakeryService.fromJson(serviceData);
           }).toList() ??
           [],
+      regionName: json['region_name']
     );
   }
    // Belirli bir tarih için ekmek sayısını ve devir ekmek sayısını döndür

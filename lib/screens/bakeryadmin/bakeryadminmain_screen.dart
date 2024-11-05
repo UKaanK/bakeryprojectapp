@@ -42,7 +42,15 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
       appBar: AppBar(
         automaticallyImplyLeading:
             false, // AppBar'daki varsayılan Drawer simgesini kaldırır
-        title: Text('Ana Sayfa', style: TextStyle(fontSize: 30)),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+            "ANASAYFA"
+            ),
+           
+          ],
+        ),
       ),
       drawer: Drawer(
         child: SingleChildScrollView(

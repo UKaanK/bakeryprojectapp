@@ -20,12 +20,10 @@ class _BakeryAdminProductionScreenState
     extends State<BakeryAdminProductionScreen> {
   final BakeryServices _bakeryServices = BakeryServices();
   List<BakeryModel> bakeryList = [];
-  List<String> firinbaslik = [];
-  List<List<String>> firinsatir = [];
-
+  Map<String, List<BakeryModel>> groupedBakeries = {}; // Bölgelere göre gruplama
+  String selectedBolge = ''; // Seçilen bölge
   late Future<void> _bakeryDataFuture;
   DateTime selectedDate = DateTime.now();
-  double ortalamaEkmek = 0.0;
 
   @override
   void initState() {
@@ -44,12 +42,7 @@ class _BakeryAdminProductionScreenState
 
       setState(() {
         bakeryList = bakeries;
-        firinbaslik = ['Tarih'];
-        for (var bakery in bakeryList) {
-          firinbaslik.add(bakery.firinIsmi);
-        }
-
-        updateTableData();
+        groupBakeriesByBolge(); // Bölgelere göre gruplama yapılacak
       });
       return bakeries;
     } catch (e) {
@@ -58,69 +51,15 @@ class _BakeryAdminProductionScreenState
     }
   }
 
-  void updateTableData() {
-    firinsatir.clear();
-
-    // Seçilen tarihten itibaren 4 haftalık veriyi hesapla ve tabloya ekle
-    for (int i = 0; i < 4; i++) {
-      DateTime date = selectedDate.subtract(Duration(days: i * 7));
-      String formattedDate = DateFormat('dd.MM.yyyy').format(date);
-
-      // Tarih satırı ile başlayıp, ekmek sayılarını ekliyoruz
-      List<String> row = [formattedDate];
-      for (var bakery in bakeryList) {
-        var serviceData = bakery.getEkmekSayisiByDate(formattedDate);
-        if (serviceData != null && serviceData.containsKey('ekmek_sayisi')) {
-          row.add(serviceData['ekmek_sayisi'].toString());
-        } else {
-          row.add('-');
-        }
-      }
-
-      // Başlık sayısıyla eşleşecek şekilde satır uzunluğunu kontrol et
-      while (row.length < firinbaslik.length) {
-        row.add('-'); // Eksik hücreleri doldurmak için boş değer ekleyin
-      }
-
-      firinsatir.add(row);
-    }
-
-    // Son bir haftalık ortalama ekmek sayısını hesapla
-    ortalamaEkmek = calculateWeeklyAverage();
-    // Ortalamayı gösteren bir yer ekleyelim (örneğin bir değişken ya da ekranda bir metin)
-    print("Son bir haftalık ortalama ekmek sayısı: $ortalamaEkmek");
-  }
-
-  double calculateWeeklyAverage() {
-  double totalEkmekSayisi = 0.0;
-  double totalDevirEkmekSayisi = 0.0;
-
-  // Son 1 haftanın toplam ekmek sayısını ve devir ekmek sayısını hesapla
-  for (int day = 0; day < 7; day++) {
-    DateTime date = selectedDate.subtract(Duration(days: day));
-    String formattedDate = DateFormat('dd.MM.yyyy').format(date);
-
+  void groupBakeriesByBolge() {
+    groupedBakeries.clear();
     for (var bakery in bakeryList) {
-      var serviceData = bakery.getEkmekSayisiByDate(formattedDate);
-      if (serviceData != null) {
-        if (serviceData.containsKey('ekmek_sayisi')) {
-          totalEkmekSayisi += serviceData['ekmek_sayisi']!.toDouble();
-        }
-        if (serviceData.containsKey('devir_ekmek_sayisi')) {
-          totalDevirEkmekSayisi += serviceData['devir_ekmek_sayisi']!.toDouble();
-        }
+      if (!groupedBakeries.containsKey(bakery.regionName)) {
+        groupedBakeries[bakery.regionName] = [];
       }
+      groupedBakeries[bakery.regionName]!.add(bakery);
     }
   }
-
-  // Haftalık farkı hesapla
-  var difference = totalEkmekSayisi - totalDevirEkmekSayisi;
-
-  // Farkı 7'ye bölerek ortalamayı hesapla
-  var averageDifference = difference / 7;
-
-  return averageDifference;
-}
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -132,7 +71,6 @@ class _BakeryAdminProductionScreenState
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        updateTableData();
       });
     }
   }
@@ -141,7 +79,6 @@ class _BakeryAdminProductionScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: bakeryappbar(
-        centerTitle: true,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -166,98 +103,74 @@ class _BakeryAdminProductionScreenState
           } else if (!snapshot.hasData) {
             return Center(child: Text("Veri bulunamadı."));
           } else {
-            List<BakeryModel> bakeryList = snapshot.data as List<BakeryModel>;
-
             return Column(
               children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 3,
-                  child: DataTable(
-                    columns: [
-                      DataColumn(
-                          label: Text('FIRIN',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('EKMEK',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('Devir Ekmek Sayısı',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                    ],
-                    rows: bakeryList.map((bakery) {
-                      var serviceData = bakery.getEkmekSayisiByDate(
-                          DateFormat('dd.MM.yyyy').format(selectedDate));
-                      return DataRow(cells: [
-                        DataCell(Text(bakery.firinIsmi)),
-                        DataCell(Text(serviceData['ekmek_sayisi'].toString())),
-                        DataCell(
-                            Text(serviceData['devir_ekmek_sayisi'].toString())),
-                      ]);
-                    }).toList(),
-                  ),
+                // Bölge seçimi için DropdownButton
+                DropdownButton<String>(
+                  value: selectedBolge.isEmpty ? null : selectedBolge,
+                  hint: Text('Bir bölge seçin'),
+                  items: groupedBakeries.keys.map((String bolge) {
+                    return DropdownMenuItem<String>(
+                      value: bolge,
+                      child: Text(bolge),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedBolge = value ?? '';
+                    });
+                  },
                 ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 3,
-                    child: DataTable(
-                      border: TableBorder.all(width: 2),
-                      columns: firinbaslik.map((column) {
-                        return DataColumn(
-                          label: Text(
-                            column,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
-                          ),
-                        );
-                      }).toList(),
-                      rows: firinsatir.map((row) {
-                        return DataRow(
-                          cells: row.map((cell) {
-                            return DataCell(
-                              Text(
-                                cell,
-                                textAlign: TextAlign.start,
+                if (selectedBolge.isNotEmpty)
+                  Expanded(
+                    child: ListView(
+                      children: groupedBakeries[selectedBolge]!.map((bakery) {
+                        return Column(
+                          children: [
+                            Text(
+                              bakery.firinIsmi,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            SizedBox(height: 8),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height / 3,
+                              child: DataTable(
+                                columns: [
+                                  DataColumn(label: Text('Ekmek Sayısı')),
+                                  DataColumn(label: Text('Devir Ekmek Sayısı')),
+                                ],
+                                rows: [
+                                  DataRow(
+                                    cells: [
+                                      DataCell(Text(
+                                        bakery.getEkmekSayisiByDate(
+                                                DateFormat('dd.MM.yyyy')
+                                                    .format(selectedDate))?['ekmek_sayisi']
+                                                ?.toString() ??
+                                            '-',
+                                        textAlign: TextAlign.start,
+                                      )),
+                                      DataCell(Text(
+                                        bakery.getEkmekSayisiByDate(
+                                                DateFormat('dd.MM.yyyy')
+                                                    .format(selectedDate))?['devir_ekmek_sayisi']
+                                                ?.toString() ??
+                                            '-',
+                                        textAlign: TextAlign.start,
+                                      )),
+                                    ],
+                                  ),
+                                ],
                               ),
-                            );
-                          }).toList(),
+                            ),
+                          ],
                         );
                       }).toList(),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Text(
-                    "ORT. ÜRETİLMESİ GEREKEN EKMEK: ${ortalamaEkmek.toStringAsFixed(2)}",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BakeryAdminProductionOrderScreen(),
-                    ),
-                  ),
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width / 1.5,
-                    height: MediaQuery.of(context).size.height / 11,
-                    color: Colors.blue,
-                    child: Text(
-                      "ÜRETİM EMRİ GİR",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25),
-                    ),
-                  ),
-                ),
+                  TextButton(onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => BakeryAdminProductionOrderScreen(),)), child: Text("TIKLA"))
               ],
             );
           }

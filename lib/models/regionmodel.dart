@@ -6,13 +6,9 @@ class MarketModel {
 
   factory MarketModel.fromJson(Map<String, dynamic> json) {
     String marketName = json.keys.first; // İlk anahtar market adı
-    Map<String, String> marketServices = Map<String, String>.from(
-        json[marketName] as Map<dynamic, dynamic>);
-    return MarketModel(
-     name: marketName,
-      services: marketServices
-    );
-    
+    Map<String, String> marketServices =
+        Map<String, String>.from(json[marketName] as Map<dynamic, dynamic>);
+    return MarketModel(name: marketName, services: marketServices);
   }
 
   Map<String, dynamic> toJson() {
@@ -24,30 +20,35 @@ class MarketModel {
 
 class RegionModel {
   String regionName;
+  String rolsId;
   List<MarketModel> market;
 
-  RegionModel({required this.regionName, required this.market});
+  RegionModel(
+      {required this.regionName, required this.market, required this.rolsId});
 
   factory RegionModel.fromJson(Map<String, dynamic> json) {
-  // region_name alanı
-  final String regionName = json['region_name'] ?? '';
+    // region_name alanı
+    final String regionName = json['region_name'] ?? '';
 
-  // market alanını kontrol et ve uygun şekilde işle
-  final List<dynamic>? marketsData = json['market'] as List<dynamic>?; // null olabileceğini belirtin
-  final List<MarketModel> markets = marketsData != null
-      ? marketsData.map((marketData) => MarketModel.fromJson(marketData as Map<String, dynamic>)).toList()
-      : []; // Eğer market null ise boş bir liste döndür
+    // market alanını kontrol et ve uygun şekilde işle
+    final List<dynamic>? marketsData =
+        json['market'] as List<dynamic>?; // null olabileceğini belirtin
+    final List<MarketModel> markets = marketsData != null
+        ? marketsData
+            .map((marketData) =>
+                MarketModel.fromJson(marketData as Map<String, dynamic>))
+            .toList()
+        : []; // Eğer market null ise boş bir liste döndür
 
-  return RegionModel(
-    regionName: regionName,
-    market: markets,
-  );
-}
+    return RegionModel(
+        regionName: regionName, market: markets, rolsId: json['rols_id']);
+  }
 
   Map<String, dynamic> toJson() {
     return {
       'region_name': regionName,
       'market': market.map((m) => m.toJson()).toList(),
+      'rols_id': rolsId
     };
   }
 }
