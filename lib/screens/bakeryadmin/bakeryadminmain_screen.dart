@@ -36,6 +36,7 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
     print(widget.userModel.rolsId);
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -251,7 +252,7 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BakeryAdminDistributionScreen(userModel:widget.userModel),
+                          builder: (context) => BakeryAdminDistributionScreen(),
                         )),
                     child: Container(
                       width: MediaQuery.of(context).size.width / 1.2,

@@ -1,3 +1,5 @@
+
+
 // import 'package:bakeryprojectapp/models/regionmodel.dart';
 // import 'package:bakeryprojectapp/services/regionservices.dart';
 // import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
@@ -17,6 +19,28 @@
 
 // class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
 //   final RegionService _regionService = RegionService();
+
+
+// import 'package:bakeryprojectapp/models/regionmodel.dart';
+// import 'package:bakeryprojectapp/services/regionservices.dart';
+// import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
+// import 'package:flutter/material.dart';
+
+// class BakeryAdminReportsScreen extends StatefulWidget {
+//   final String rolsId;
+//   final String regionId;
+
+//   const BakeryAdminReportsScreen(
+//       {super.key, required this.rolsId, required this.regionId});
+
+//   @override
+//   State<BakeryAdminReportsScreen> createState() =>
+//       _BakeryAdminReportsScreenState();
+// }
+
+// class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
+//   final RegionService _regionService = RegionService();
+
 
 //   List<String> columns = ['Market', 'Toplam'];
 //   List<List<String>> rows = [];
@@ -117,6 +141,9 @@
 //     );
 //   }
 // }
+
+
+// */
 
 
 
@@ -431,7 +458,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
           ),
           // Genel toplam göstergesi
           Card(
-            color: Color.fromARGB(255, 78, 214, 255),
+            color: Colors.blue,
             margin: EdgeInsets.all(0),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
