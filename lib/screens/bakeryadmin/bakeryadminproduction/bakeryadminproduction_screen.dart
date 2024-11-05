@@ -577,6 +577,7 @@ class _BakeryAdminProductionScreenState
     return Scaffold(
       appBar: bakeryappbar(
         title: Text("Üretim Ekranı"),
+        automaticallyImplyLeading: false,
       ),
       body: Stack(
         children: [

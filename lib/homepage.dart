@@ -200,7 +200,7 @@ class _HomePageState extends State<HomePage> {
           custom_button(context, 'RAPOR', () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => RaporPage()),
+              MaterialPageRoute(builder: (context) => RaporPage(userModel: widget.userModel,)),
             );
           }),
           SizedBox(height: 20),
