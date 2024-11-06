@@ -195,7 +195,7 @@ class _HomePageState extends State<HomePage> {
           custom_button(context, 'SERVİS', () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ServisPage()),
+              MaterialPageRoute(builder: (context) => ServisPage(userModel: widget.userModel,)),
             );
           }),
           SizedBox(height: 20),

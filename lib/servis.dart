@@ -2,20 +2,26 @@ import 'package:bakeryprojectapp/marketler.dart';
 import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:flutter/material.dart';
 
+import 'models/usermodel.dart';
 
 class ServisPage extends StatelessWidget {
-  final List<String> buttonLabels = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6' , 'S7' , 'S8' , 'S9']; // Örnek buton listesi
+  final UserModel userModel;
+
+  ServisPage({required this.userModel});
 
   @override
   Widget build(BuildContext context) {
+    // Servis anahtarlarını sıralıyoruz
+    final sortedServisKeys = userModel.servis.keys.toList()..sort();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'SERVİS', // AppBar başlığı
+          'SERVİS',
           style: TextStyle(fontSize: 40),
         ),
         iconTheme: const IconThemeData(
-          color: Colors.blue, // İkonların rengi mavi
+          color: Colors.blue,
           size: 30,
         ),
       ),
@@ -23,21 +29,27 @@ class ServisPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, // Her satırda 3 buton olacak
-            crossAxisSpacing: 10, // Butonlar arası yatay boşluk
-            mainAxisSpacing: 30, // Butonlar arası dikey boşluk
-            childAspectRatio: 2, // Butonların genişlik/yükseklik oranı
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 30,
+            childAspectRatio: 2,
           ),
-          itemCount: buttonLabels.length,
+          itemCount: sortedServisKeys.length,
           itemBuilder: (context, index) {
+            // Sıralı anahtarlarla `servisKey` ve `marketler` alınıyor
+            String servisKey = sortedServisKeys[index];
+            List<String> marketler = userModel.servis[servisKey]!;
+
             return custom_button1(
               context,
-              buttonLabels[index],
-              () {          
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MarketPage()),
-                  );
+              servisKey,
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MarketPage(marketler: marketler),
+                  ),
+                );
               },
             );
           },

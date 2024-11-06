@@ -1,11 +1,26 @@
 import 'package:bakeryprojectapp/shell.dart';
 import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:flutter/material.dart';
- // Özel düğme widget'ını içe aktarıyor
- // Shell sayfasını içe aktarıyor
+// Özel düğme widget'ını içe aktarıyor
+// Shell sayfasını içe aktarıyor
 
 class MarketPage extends StatelessWidget {
-  final List<String> buttonLabels = ['SHELL', 'AYAZLI', 'MAT', 'BARIŞ', 'GÖZDE', 'CENEVİZ' , 'ŞOK' , 'A101' , 'BİM' , 'MİGROS' , 'CARREFOURSA']; // Buton listesi
+   final List<String> marketler;
+ MarketPage({required this.marketler});
+
+  final List<String> buttonLabels = [
+    'SHELL',
+    'AYAZLI',
+    'MAT',
+    'BARIŞ',
+    'GÖZDE',
+    'CENEVİZ',
+    'ŞOK',
+    'A101',
+    'BİM',
+    'MİGROS',
+    'CARREFOURSA'
+  ]; // Buton listesi
 
   @override
   Widget build(BuildContext context) {
@@ -23,24 +38,16 @@ class MarketPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(35.0),
         child: ListView.builder(
-          itemCount: buttonLabels.length,
+          itemCount: marketler.length,
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 13.0),
-              child: customButton2(
-                context,
-                buttonLabels[index],
-                () {
-                  
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ShellPage()),
-                    );
-                 
-                   
-                  }
-                
-              ),
+              child: customButton2(context, marketler[index], () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ShellPage()),
+                );
+              }),
             );
           },
         ),
