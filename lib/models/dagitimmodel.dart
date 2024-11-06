@@ -37,7 +37,6 @@ class Market {
     String marketName = json.keys.first; // İlk anahtar market adı
     Map<String, dynamic> marketServices =
         Map<String, dynamic>.from(json[marketName] as Map<dynamic, dynamic>);
-    int aractakiEkmek =marketServices.contain
     return Market(
       name: marketName,
       services: marketServices,
