@@ -483,6 +483,7 @@ class _BakeryLoginScreenState extends State<BakeryLoginScreen> {
                               ),
                             ),
                             const Spacer(),
+                            
                           ],
                         ),
                       )),
@@ -521,7 +522,7 @@ class _BakeryLoginScreenState extends State<BakeryLoginScreen> {
                 builder: (context) => HomePage(userModel: _userModel),
               ),
               (route) => false,
-            );
+            );  
           }
         } else {
           _showError("Hatalı Şifre");
