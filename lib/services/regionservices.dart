@@ -32,8 +32,8 @@ class RegionService {
       QuerySnapshot querySnapshot = await _firestore
           .collection('rols')
           .doc(rolsId)
-          .collection("region")
-          .where('rolsId', isEqualTo: rolsId)
+          .collection("market")
+          .where('region_name', isEqualTo: "Samandıra")
           .get();
 
       // Extracting the region names from the query result
@@ -75,5 +75,26 @@ class RegionService {
     for (var region in regions) {
       print("Bölge Adı: ${region.regionName}"); // Region Name'i yazdırır
     }
+  }
+    Future<RegionModel?> getRegionsData(String rolsId, String regionName) async {
+    try {
+      // /rols/1/market/market isimli belgenin içinde region name'e göre filtreleme yapıyoruz
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection('rols')
+          .doc(rolsId)
+          .collection('market')
+          .where('region_name', isEqualTo: regionName)
+          .get();
+
+      // Verilerin mevcut olup olmadığını kontrol et
+      if (querySnapshot.docs.isNotEmpty) {
+        // İlk belgeyi alarak RegionModel’e dönüştür
+        var data = querySnapshot.docs.first.data();
+        return RegionModel.fromJson(data);  // RegionModel'in uygun bir fromMap metodu olması gerekir.
+      }
+    } catch (e) {
+      print("Hata oluştu: $e");
+    }
+    return null;
   }
 }

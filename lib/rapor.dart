@@ -18,34 +18,23 @@ class _RaporPageState extends State<RaporPage> {
 
   List<Map<String, dynamic>> marketData = [];
 
+  List<String> regionNames = []; // Bölge isimlerini tutacak liste
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    fetchRegionData();
+    fetchRegions();
   }
 
-  void fetchRegionData() async {
-    RegionModel? regionData = await _regionService.getRegionData("2","Samandıra");
-
-    if (regionData != null) {
-      setState(() {
-        marketData = regionData.market.map((market) {
-          Map<String, int> services = {};
-
-          // Her hizmeti ayrı ayrı kaydet
-          market.services.forEach((key, value) {
-            int serviceValue = int.tryParse(value.toString()) ?? 0;
-            services[key] = serviceValue;
-          });
-
-          return {
-            'marketName': market.name,
-            'services': services,
-          };
-        }).toList();
-      });
-    }
+  // Verileri çekme ve güncelleme fonksiyonu
+  void fetchRegions() async {
+     List<RegionModel> regions = await _regionService.getRegions("2");
+  setState(() {
+    regionNames = regions.map((region) => region.regionName).toList();
+  });
   }
+
+
 
   int calculateMarketTotal(Map<String, int> services) {
     // Belirli bir marketteki tüm hizmetlerin toplamını hesapla
@@ -57,157 +46,188 @@ class _RaporPageState extends State<RaporPage> {
     return marketData.fold(0, (sum, market) => sum + calculateMarketTotal(market['services'] as Map<String, int>));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: marketData.isEmpty
-                  ? Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      itemCount: marketData.length,
-                      itemBuilder: (context, index) {
-                        final data = marketData[index];
-                        final marketTotal = calculateMarketTotal(data['services'] as Map<String, int>);
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(),
+  //     body: Column(
+  //       children: [
+  //         Expanded(
+  //           child: Padding(
+  //             padding: const EdgeInsets.all(16.0),
+  //             child: marketData.isEmpty
+  //                 ? Center(child: CircularProgressIndicator())
+  //                 : ListView.builder(
+  //                     itemCount: marketData.length,
+  //                     itemBuilder: (context, index) {
+  //                       final data = marketData[index];
+  //                       final marketTotal = calculateMarketTotal(data['services'] as Map<String, int>);
 
-                        return Card(
-                          elevation: 5,
-                          margin: EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.store,
-                                          color: Colors.blueAccent,
-                                          size: 22,
-                                        ),
-                                        SizedBox(width: 8),
-                                        Text(
-                                          data['marketName'],
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blueAccent,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Icon(
-                                      Icons.arrow_drop_down_circle,
-                                      color: Colors.grey.shade400,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Column(
-                                  children: (data['services'] as Map<String, int>).entries.map((entry) {
-                                    return Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          entry.key,
-                                          style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
-                                        ),
-                                        Text(
-                                          entry.value.toString(),
-                                          style: TextStyle(fontSize: 16, color: Colors.grey.shade900),
-                                        ),
-                                      ],
-                                    );
-                                  }).toList(),
-                                ),
-                                Divider(),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.attach_money,
-                                          color: Colors.green,
-                                          size: 20,
-                                        ),
-                                        Text(
-                                          'Toplam',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      marketTotal.toString(),
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ),
-          // Genel toplam göstergesi
-          Card(
-            color: Colors.blue,
-            margin: EdgeInsets.all(0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Genel Toplam',
+  //                       return Card(
+  //                         elevation: 5,
+  //                         margin: EdgeInsets.symmetric(vertical: 8),
+  //                         shape: RoundedRectangleBorder(
+  //                           borderRadius: BorderRadius.circular(15),
+  //                         ),
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.all(16.0),
+  //                           child: Column(
+  //                             crossAxisAlignment: CrossAxisAlignment.start,
+  //                             children: [
+  //                               Row(
+  //                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                                 children: [
+  //                                   Row(
+  //                                     children: [
+  //                                       Icon(
+  //                                         Icons.store,
+  //                                         color: Colors.blueAccent,
+  //                                         size: 22,
+  //                                       ),
+  //                                       SizedBox(width: 8),
+  //                                       Text(
+  //                                         data['marketName'],
+  //                                         style: TextStyle(
+  //                                           fontSize: 20,
+  //                                           fontWeight: FontWeight.bold,
+  //                                           color: Colors.blueAccent,
+  //                                         ),
+  //                                       ),
+  //                                     ],
+  //                                   ),
+  //                                   Icon(
+  //                                     Icons.arrow_drop_down_circle,
+  //                                     color: Colors.grey.shade400,
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                               SizedBox(height: 10),
+  //                               Column(
+  //                                 children: (data['services'] as Map<String, int>).entries.map((entry) {
+  //                                   return Row(
+  //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                                     children: [
+  //                                       Text(
+  //                                         entry.key,
+  //                                         style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+  //                                       ),
+  //                                       Text(
+  //                                         entry.value.toString(),
+  //                                         style: TextStyle(fontSize: 16, color: Colors.grey.shade900),
+  //                                       ),
+  //                                     ],
+  //                                   );
+  //                                 }).toList(),
+  //                               ),
+  //                               Divider(),
+  //                               Row(
+  //                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                                 children: [
+  //                                   Row(
+  //                                     children: [
+  //                                       Icon(
+  //                                         Icons.attach_money,
+  //                                         color: Colors.green,
+  //                                         size: 20,
+  //                                       ),
+  //                                       Text(
+  //                                         'Toplam',
+  //                                         style: TextStyle(
+  //                                           fontSize: 18,
+  //                                           fontWeight: FontWeight.bold,
+  //                                           color: Colors.black,
+  //                                         ),
+  //                                       ),
+  //                                     ],
+  //                                   ),
+  //                                   Text(
+  //                                     marketTotal.toString(),
+  //                                     style: TextStyle(
+  //                                       fontSize: 18,
+  //                                       fontWeight: FontWeight.bold,
+  //                                       color: Colors.black,
+  //                                     ),
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                   ),
+  //           ),
+  //         ),
+  //         // Genel toplam göstergesi
+  //         Card(
+  //           color: Colors.blue,
+  //           margin: EdgeInsets.all(0),
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.only(
+  //               topLeft: Radius.circular(20),
+  //               topRight: Radius.circular(20),
+  //             ),
+  //           ),
+  //           child: Padding(
+  //             padding: const EdgeInsets.all(16.0),
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 Text(
+  //                   'Genel Toplam',
+  //                   style: TextStyle(
+  //                     fontSize: 20,
+  //                     fontWeight: FontWeight.bold,
+  //                     color: Colors.white,
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   calculateGeneralTotal().toString(), // Dinamik olarak genel toplamı hesapla
+  //                   style: TextStyle(
+  //                     fontSize: 20,
+  //                     fontWeight: FontWeight.bold,
+  //                     color: Colors.white,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(),
+    body: regionNames.isEmpty
+        ? Center(child: CircularProgressIndicator())
+        : ListView.builder(
+            itemCount: regionNames.length,
+            itemBuilder: (context, index) {
+              final regionName = regionNames[index];
+              return Card(
+                elevation: 5,
+                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: ListTile(
+                  title: Text(
+                    regionName,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.blueAccent,
                     ),
                   ),
-                  Text(
-                    calculateGeneralTotal().toString(), // Dinamik olarak genel toplamı hesapla
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
-        ],
-      ),
-    );
-  }
+  );
+}
 }
 
 

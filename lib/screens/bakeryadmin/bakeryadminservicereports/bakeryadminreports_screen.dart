@@ -1,5 +1,3 @@
-
-
 // import 'package:bakeryprojectapp/models/regionmodel.dart';
 // import 'package:bakeryprojectapp/services/regionservices.dart';
 // import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
@@ -19,28 +17,6 @@
 
 // class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
 //   final RegionService _regionService = RegionService();
-
-
-// import 'package:bakeryprojectapp/models/regionmodel.dart';
-// import 'package:bakeryprojectapp/services/regionservices.dart';
-// import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
-// import 'package:flutter/material.dart';
-
-// class BakeryAdminReportsScreen extends StatefulWidget {
-//   final String rolsId;
-//   final String regionId;
-
-//   const BakeryAdminReportsScreen(
-//       {super.key, required this.rolsId, required this.regionId});
-
-//   @override
-//   State<BakeryAdminReportsScreen> createState() =>
-//       _BakeryAdminReportsScreenState();
-// }
-
-// class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
-//   final RegionService _regionService = RegionService();
-
 
 //   List<String> columns = ['Market', 'Toplam'];
 //   List<List<String>> rows = [];
@@ -141,9 +117,6 @@
 //     );
 //   }
 // }
-
-
-// */
 
 
 
@@ -347,7 +320,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: bakeryappbar(automaticallyImplyLeading: false,title: Text(widget.regionId)),
+      appBar: bakeryappbar(automaticallyImplyLeading: true,title: Text(widget.regionId)),
       body: Column(
         children: [
           Expanded(
@@ -458,7 +431,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
           ),
           // Genel toplam göstergesi
           Card(
-            color: Colors.blue,
+            color: Color.fromARGB(255, 78, 214, 255),
             margin: EdgeInsets.all(0),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
