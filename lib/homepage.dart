@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("ANASAYFA"),
+            Text("ANASAYFA" , style: TextStyle(fontSize: 40),),
           ],
         ),
       ),
