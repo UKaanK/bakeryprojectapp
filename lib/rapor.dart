@@ -24,7 +24,8 @@ class _RaporPageState extends State<RaporPage> {
   }
 
   void fetchDagitimData() async {
-    DagitimModel? regionData = await _dagitimService.getDagitimData(widget.userModel.rolsId,"6.11.2024");
+    DagitimModel? regionData = await _dagitimService.getDagitimData(
+        widget.userModel.rolsId, "6.11.2024");
 
     if (regionData != null) {
       setState(() {
@@ -53,13 +54,17 @@ class _RaporPageState extends State<RaporPage> {
 
   int calculateGeneralTotal() {
     // marketData'daki tüm marketlerin hizmet toplamlarını hesapla
-    return marketData.fold(0, (sum, market) => sum + calculateMarketTotal(market['services'] as Map<String, int>));
+    return marketData.fold(
+        0,
+        (sum, market) =>
+            sum + calculateMarketTotal(market['services'] as Map<String, int>));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: bakeryappbar(automaticallyImplyLeading: true, title: Text("Raporlar")),
+      appBar: bakeryappbar(
+          automaticallyImplyLeading: true, title: Text("Raporlar")),
       body: Column(
         children: [
           Expanded(
@@ -71,7 +76,8 @@ class _RaporPageState extends State<RaporPage> {
                       itemCount: marketData.length,
                       itemBuilder: (context, index) {
                         final data = marketData[index];
-                        final marketTotal = calculateMarketTotal(data['services'] as Map<String, int>);
+                        final marketTotal = calculateMarketTotal(
+                            data['services'] as Map<String, int>);
 
                         return Card(
                           elevation: 5,
@@ -85,7 +91,8 @@ class _RaporPageState extends State<RaporPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
@@ -113,17 +120,25 @@ class _RaporPageState extends State<RaporPage> {
                                 ),
                                 SizedBox(height: 10),
                                 Column(
-                                  children: (data['services'] as Map<String, int>).entries.map((entry) {
+                                  children:
+                                      (data['services'] as Map<String, int>)
+                                          .entries
+                                          .map((entry) {
                                     return Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           entry.key,
-                                          style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey.shade700),
                                         ),
                                         Text(
                                           entry.value.toString(),
-                                          style: TextStyle(fontSize: 16, color: Colors.grey.shade900),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey.shade900),
                                         ),
                                       ],
                                     );
@@ -131,7 +146,8 @@ class _RaporPageState extends State<RaporPage> {
                                 ),
                                 Divider(),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [

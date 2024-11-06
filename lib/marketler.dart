@@ -8,20 +8,6 @@ class MarketPage extends StatelessWidget {
    final List<String> marketler;
  MarketPage({required this.marketler});
 
-  final List<String> buttonLabels = [
-    'SHELL',
-    'AYAZLI',
-    'MAT',
-    'BARIŞ',
-    'GÖZDE',
-    'CENEVİZ',
-    'ŞOK',
-    'A101',
-    'BİM',
-    'MİGROS',
-    'CARREFOURSA'
-  ]; // Buton listesi
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

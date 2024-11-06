@@ -16,17 +16,33 @@ class DagitimModel {
 
 class Market {
   final String name;
+  final int aractakiEkmek;
+  final int dagitilanEkmek;
+  final int iadeEkmek;
+  final int tahsilat;
+  final int totalEkmek;
   final Map<String, dynamic>
       services; // Burada String yerine dynamic kullanmalısınız
 
-  Market({required this.name, required this.services});
+  Market(
+      {required this.name,
+      required this.services,
+      required this.aractakiEkmek,
+      required this.dagitilanEkmek,
+      required this.iadeEkmek,
+      required this.tahsilat,
+      required this.totalEkmek});
 
   factory Market.fromJson(Map<String, dynamic> json) {
     String marketName = json.keys.first; // İlk anahtar market adı
     Map<String, dynamic> marketServices =
         Map<String, dynamic>.from(json[marketName] as Map<dynamic, dynamic>);
-
-    return Market(name: marketName, services: marketServices);
+    int aractakiEkmek =marketServices.contain
+    return Market(
+      name: marketName,
+      services: marketServices,
+      aractakiEkmek: aractakiEkmek
+    );
   }
 
   Map<String, dynamic> toJson() {
