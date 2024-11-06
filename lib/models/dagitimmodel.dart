@@ -35,12 +35,18 @@ class Market {
 
   factory Market.fromJson(Map<String, dynamic> json) {
     String marketName = json.keys.first; // İlk anahtar market adı
+        Map<String, dynamic> marketData = json[marketName] as Map<String, dynamic>;
+
     Map<String, dynamic> marketServices =
         Map<String, dynamic>.from(json[marketName] as Map<dynamic, dynamic>);
-    return Market(
+     return Market(
       name: marketName,
       services: marketServices,
-      aractakiEkmek: aractakiEkmek
+      aractakiEkmek: marketData['aractaki_ekmek'] ?? 0,
+      dagitilanEkmek: marketData['dagitilan_ekmek'] ?? 0,
+      iadeEkmek: marketData['iade_ekmek'] ?? 0,
+      tahsilat: marketData['tahsilat'] ?? 0,
+      totalEkmek: marketData['total_ekmek'] ?? 0,
     );
   }
 

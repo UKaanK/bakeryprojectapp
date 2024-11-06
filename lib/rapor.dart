@@ -1,4 +1,3 @@
-
 import 'package:bakeryprojectapp/models/dagitimmodel.dart';
 import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/services/dagitimservices.dart';
@@ -225,12 +224,3 @@ class _RaporPageState extends State<RaporPage> {
     );
   }
 }
-
-
-
-
-
-
-
-
-

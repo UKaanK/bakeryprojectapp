@@ -1,3 +1,4 @@
+import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/shell.dart';
 import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,9 @@ import 'package:flutter/material.dart';
 // Shell sayfasını içe aktarıyor
 
 class MarketPage extends StatelessWidget {
-   final List<String> marketler;
- MarketPage({required this.marketler});
+  final UserModel userModel;
+  final List<String> marketler;
+  MarketPage({required this.marketler, required this.userModel});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,11 @@ class MarketPage extends StatelessWidget {
               child: customButton2(context, marketler[index], () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ShellPage()),
+                  MaterialPageRoute(
+                      builder: (context) => ShellPage(
+                            userModel: userModel,
+                            marketIsim: marketler[index],
+                          )),
                 );
               }),
             );

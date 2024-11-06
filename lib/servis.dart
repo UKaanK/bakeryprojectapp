@@ -47,7 +47,10 @@ class ServisPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MarketPage(marketler: marketler),
+                    builder: (context) => MarketPage(
+                      marketler: marketler,
+                      userModel: userModel,
+                    ),
                   ),
                 );
               },
