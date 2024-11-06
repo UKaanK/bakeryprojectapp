@@ -482,7 +482,7 @@ class _ShellPageState extends State<ShellPage> {
 
   @override
   Widget build(BuildContext context) {
-    String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
     return Scaffold(
       appBar: AppBar(
