@@ -38,7 +38,7 @@ class _BakeryAdminRegionScreenState extends State<BakeryAdminRegionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: bakeryappbar(title: Text("Bölgeler"),centerTitle: true,automaticallyImplyLeading: false,),
+      appBar: AppBar(title: Text("Bölgeler"),centerTitle: true,automaticallyImplyLeading: true,),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ListView.builder(

@@ -141,12 +141,12 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.symmetric(vertical: 30, horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: [ 
                     SizedBox(height: 10),
                     Text(
                       "${widget.userModel.name}",
                       style: TextStyle(
-                          color: Colors.white,
+                          color: const Color.fromARGB(255, 67, 33, 33),
                           fontSize: 24,
                           fontWeight: FontWeight.bold),
                     ),
@@ -154,6 +154,7 @@ class _HomePageState extends State<HomePage> {
                       "${widget.userModel.rolsId}",
                       style: TextStyle(color: Colors.white70, fontSize: 16),
                     ),
+                    
                   ],
                 ),
               ),
@@ -181,6 +182,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   _signOut();
                 },
+                
               ),
             ],
           ),
@@ -207,10 +209,7 @@ class _HomePageState extends State<HomePage> {
           custom_button(context, 'GİDER', () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => GiderPage(
-                        userModel: widget.userModel,
-                      )),
+              MaterialPageRoute(builder: (context) => GiderPage(userModel: widget.userModel,)),
             );
           }),
           Spacer(),

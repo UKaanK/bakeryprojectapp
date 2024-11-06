@@ -9,7 +9,7 @@ class bakeryappbar extends StatelessWidget implements PreferredSizeWidget {
       {super.key,
       this.title,
       this.centerTitle,
-      required this.automaticallyImplyLeading});
+      required this.automaticallyImplyLeading, required List<IconButton> actions});
   @override
   Widget build(BuildContext context) {
     return AppBar(
