@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 class MarketPage extends StatelessWidget {
   final UserModel userModel;
   final List<String> marketler;
-  MarketPage({required this.marketler, required this.userModel});
+  final String servisKey;
+  MarketPage({required this.marketler, required this.userModel,required this.servisKey});
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +38,7 @@ class MarketPage extends StatelessWidget {
                       builder: (context) => ShellPage(
                             userModel: userModel,
                             marketIsim: marketler[index],
+                            servis: servisKey,
                           )),
                 );
               }),

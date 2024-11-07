@@ -50,6 +50,7 @@ class ServisPage extends StatelessWidget {
                     builder: (context) => MarketPage(
                       marketler: marketler,
                       userModel: userModel,
+                      servisKey: servisKey,
                     ),
                   ),
                 );
