@@ -926,7 +926,18 @@ class _ShellPageState extends State<ShellPage> {
   }
 
   void _addBread() async {
-    setState(() {
+    
+    print(widget.servis);
+
+    // updateMarketEkmek'i çağırarak dağıtılan ekmek miktarını güncelleyin
+    await _dagitimService.updateMarketEkmek(
+        widget.userModel.rolsId,
+        widget.marketIsim, // Güncellenen marketin adı
+        _ekmekController.text, // Güncellenen dağıtılan ekmek miktarı
+        // İade ekmek miktarı (örneğin 0 olarak belirlenmiş),
+        widget.servis);
+
+        setState(() {
       int girilenEkmek = int.tryParse(_ekmekController.text) ?? 0;
       if (girilenEkmek > 0 && aractakiEkmek > 0) {
         dagitilanEkmek += girilenEkmek;
@@ -939,15 +950,6 @@ class _ShellPageState extends State<ShellPage> {
         _ekmekController.clear();
       }
     });
-
-    // updateMarketEkmek'i çağırarak dağıtılan ekmek miktarını güncelleyin
-    await _dagitimService.updateMarketEkmek(
-        widget.userModel.rolsId,
-        DateFormat('dd-MM-yyyy').format(DateTime(2024, 11, 6)), // tarih
-        widget.marketIsim, // Güncellenen marketin adı
-        dagitilanEkmek, // Güncellenen dağıtılan ekmek miktarı
-        iadeMiktari, // İade ekmek miktarı (örneğin 0 olarak belirlenmiş),
-        widget.servis);
   }
 
   @override
@@ -1102,11 +1104,10 @@ class _ShellPageState extends State<ShellPage> {
                                 ElevatedButton(
                                   onPressed: () {
                                     setState(() {
-                                      iadeMiktari =
-                                          int.tryParse(_iadeController.text) ??
-                                              0;
-                                      aractakiEkmek += iadeMiktari;
-                                      _iadeController.clear();
+                                      _dagitimService.updateMarketIadeEkmek(
+                                          widget.userModel.rolsId,
+                                          widget.marketIsim,
+                                          _iadeController.text);
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(

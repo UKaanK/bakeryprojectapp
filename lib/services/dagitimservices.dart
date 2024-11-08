@@ -32,157 +32,177 @@ class DagitimService {
     }
   }
 
-  // Marketin dagitilan ekmek ve iade ekmek sayılarını güncelleme
-  Future<void> updateMarketEkmek(String roleId, String tarih, String marketName,
-      int dagitilanEkmek, int iadeEkmek, String servis) async {
-    try {
-      DocumentReference documentRef = _firestore
-          .collection('rols')
-          .doc(roleId)
-          .collection('dagitim')
-          .doc(tarih);
+  // Marketin dagitilan ekmek ve iade ekmek sayılarını güncelleme (ekleyerek güncelleme)
+  Future<void> updateMarketEkmek(String roleId, String marketName,
+      String dagitilanEkmek, String servis) async {
+    String todayDate = "6.11.2024";
+    DocumentReference documentRef = _firestore
+        .collection('rols')
+        .doc(roleId)
+        .collection("dagitim")
+        .doc(todayDate);
 
-      await _firestore.runTransaction((transaction) async {
-        DocumentSnapshot snapshot = await transaction.get(documentRef);
+    await _firestore.runTransaction((transaction) async {
+      DocumentSnapshot snapshot = await transaction.get(documentRef);
 
-        if (snapshot.exists) {
-          // Veriyi JSON formatında al
-          var data = snapshot.data() as Map<String, dynamic>;
-          var marketList = data['market'] as List<dynamic>;
+      if (snapshot.exists) {
+        var marketData = snapshot['market'] ?? [];
+        List<Map<String, dynamic>> updatedMarkets = [];
+        bool marketFound = false;
 
-          // Marketleri bul ve güncelle
-          for (var marketData in marketList) {
-            if (marketData['name'] == marketName) {
-              marketData['dagitilan_ekmek'] = dagitilanEkmek;
-              marketData[servis] = dagitilanEkmek;
-              break;
+        for (var market in marketData) {
+          if (market.keys.first == marketName) {
+            var currentMarket = market[marketName];
+            int currentEkmek = currentMarket['dagitilan_ekmek'] ?? 0;
+            int currentServis = currentMarket[servis] ?? 0;
+
+            currentMarket['dagitilan_ekmek'] = currentEkmek + int.parse(dagitilanEkmek);
+            currentMarket[servis] = currentServis + int.parse(dagitilanEkmek);
+            marketFound = true;
+          }
+          updatedMarkets.add(market);
+        }
+
+        if (!marketFound) {
+          print("Market bulunamadı: $marketName");
+        }
+
+        transaction.update(documentRef, {
+          'market': updatedMarkets,
+          'date': DateTime.now(),
+        });
+        print("Tahsilat başarıyla güncellendi.");
+      } else {
+        List<Map<String, dynamic>> newMarkets = [
+          {
+            marketName: {
+              'dagitilan_ekmek': int.parse(dagitilanEkmek),
+              servis: int.parse(dagitilanEkmek),
             }
           }
-
-          // Güncellenmiş market listesi ile Firestore belgesini güncelle
-          transaction.update(documentRef, {
-            'market': marketList,
-          });
-        } else {
-          print("Document does not exist");
-        }
-      });
-    } catch (e) {
-      print("Error updating ekmek data: $e");
-    }
+        ];
+        await transaction.set(documentRef, {
+          'market': newMarkets,
+          'date': DateTime.now(),
+        });
+        print("Yeni market ve iade ekmek bilgisi eklendi.");
+      }
+    });
   }
 
-  // Marketin dagitilan ekmek ve iade ekmek sayılarını güncelleme
+  // updateMarketIadeEkmek (ekleyerek güncelleme)
   Future<void> updateMarketIadeEkmek(
     String roleId,
-    String tarih,
     String marketName,
-    int iadeEkmek,
+    String iadeEkmek,
   ) async {
-    try {
-      DocumentReference documentRef = _firestore
-          .collection('rols')
-          .doc(roleId)
-          .collection('dagitim')
-          .doc(tarih);
+    String todayDate = "6.11.2024";
+    DocumentReference documentRef = _firestore
+        .collection('rols')
+        .doc(roleId)
+        .collection("dagitim")
+        .doc(todayDate);
 
-      await _firestore.runTransaction((transaction) async {
-        DocumentSnapshot snapshot = await transaction.get(documentRef);
+    await _firestore.runTransaction((transaction) async {
+      DocumentSnapshot snapshot = await transaction.get(documentRef);
 
-        if (snapshot.exists) {
-          // Veriyi JSON formatında al
-          var data = snapshot.data() as Map<String, dynamic>;
-          var marketList = data['market'] as List<dynamic>;
+      if (snapshot.exists) {
+        var marketData = snapshot['market'] ?? [];
+        List<Map<String, dynamic>> updatedMarkets = [];
+        bool marketFound = false;
 
-          // Marketleri bul ve güncelle
-          for (var marketData in marketList) {
-            if (marketData['name'] == marketName) {
-              marketData['iade_ekmek'] = iadeEkmek;
-              break;
+        for (var market in marketData) {
+          if (market.keys.first == marketName) {
+            var currentMarket = market[marketName];
+            int currentIadeEkmek = currentMarket['iade_ekmek'] ?? 0;
+
+            currentMarket['iade_ekmek'] = currentIadeEkmek + int.parse(iadeEkmek);
+            marketFound = true;
+          }
+          updatedMarkets.add(market);
+        }
+
+        if (!marketFound) {
+          print("Market bulunamadı: $marketName");
+        }
+
+        transaction.update(documentRef, {
+          'market': updatedMarkets,
+          'date': DateTime.now(),
+        });
+        print("İade ekmek başarıyla güncellendi.");
+      } else {
+        List<Map<String, dynamic>> newMarkets = [
+          {
+            marketName: {
+              'iade_ekmek': int.parse(iadeEkmek),
             }
           }
-
-          // Güncellenmiş market listesi ile Firestore belgesini güncelle
-          transaction.update(documentRef, {
-            'market': marketList,
-          });
-        } else {
-          print("Document does not exist");
-        }
-      });
-    } catch (e) {
-      print("Error updating ekmek data: $e");
-    }
+        ];
+        await transaction.set(documentRef, {
+          'market': newMarkets,
+          'date': DateTime.now(),
+        });
+        print("Yeni market ve iade ekmek bilgisi eklendi.");
+      }
+    });
   }
 
+  // saveOrUpdateTahsilat (ekleyerek güncelleme)
   Future<void> saveOrUpdateTahsilat(
-    String rolsId, String marketName, String newTahsilat) async {
-  // Bugünün tarihini al ve gün-ay-yıl formatına çevir
-  String todayDate = "6.11.2024";
+      String rolsId, String marketName, String newTahsilat) async {
+    String todayDate = "6.11.2024";
+    DocumentReference documentRef = _firestore
+        .collection('rols')
+        .doc(rolsId)
+        .collection("dagitim")
+        .doc(todayDate);
 
-  // Firestore'dan belgeyi al
-  DocumentReference documentRef = _firestore
-      .collection('rols')
-      .doc(rolsId)
-      .collection("dagitim")
-      .doc(todayDate);
+    await _firestore.runTransaction((transaction) async {
+      DocumentSnapshot snapshot = await transaction.get(documentRef);
 
-  // Firestore'a kayıt işlemi
-  await _firestore.runTransaction((transaction) async {
-    DocumentSnapshot snapshot = await transaction.get(documentRef);
+      if (snapshot.exists) {
+        var marketData = snapshot['market'] ?? [];
+        List<Map<String, dynamic>> updatedMarkets = [];
+        bool marketFound = false;
 
-    // Eğer belge mevcutsa güncelle, yoksa yeni belge oluştur
-    if (snapshot.exists) {
-      // Mevcut marketler verisini al
-      var marketData = snapshot['market'] ?? [];
-      List<Map<String, dynamic>> updatedMarkets = [];
+        for (var market in marketData) {
+          if (market.keys.first == marketName) {
+            var currentMarket = market[marketName];
+            int currentTahsilat = currentMarket['tahsilat'] ?? 0;
 
-      bool marketFound = false;
-
-      // Belirtilen marketi bul ve tahsilat değerini güncelle
-      for (var market in marketData) {
-        if (market.keys.first == marketName) {
-          var currentMarket = market[marketName];
-          
-          // Yeni tahsilat değerini güncelle
-          currentMarket['tahsilat'] = int.parse(newTahsilat);
-          marketFound = true;
-        }
-        updatedMarkets.add(market);
-      }
-
-      if (!marketFound) {
-        // Eğer market bulunmazsa yeni bir market ekleyebilirsiniz
-        print("Market bulunamadı: $marketName");
-      }
-
-      // Güncellenmiş marketleri Firestore'a kaydet
-      transaction.update(documentRef, {
-        'market': updatedMarkets,
-        'date': DateTime.now(),
-      });
-
-      print("Tahsilat başarıyla güncellendi.");
-    } else {
-      // Eğer belge yoksa yeni bir belge oluştur
-      List<Map<String, dynamic>> newMarkets = [
-        {
-          marketName: {
-            'tahsilat': int.parse(newTahsilat),
+            currentMarket['tahsilat'] = currentTahsilat + int.parse(newTahsilat);
+            marketFound = true;
           }
+          updatedMarkets.add(market);
         }
-      ];
 
-      // Yeni market bilgisiyle belgeyi oluştur
-      await transaction.set(documentRef, {
-        'market': newMarkets,
-        'date': DateTime.now(),
-      });
+        if (!marketFound) {
+          print("Market bulunamadı: $marketName");
+        }
 
-      print("Yeni market ve tahsilat bilgisi eklendi.");
-    }
-  });
-}
+        transaction.update(documentRef, {
+          'market': updatedMarkets,
+          'date': DateTime.now(),
+        });
+        print("Tahsilat başarıyla güncellendi.");
+      } else {
+        List<Map<String, dynamic>> newMarkets = [
+          {
+            marketName: {
+              'tahsilat': int.parse(newTahsilat),
+            }
+          }
+        ];
+        await transaction.set(documentRef, {
+          'market': newMarkets,
+          'date': DateTime.now(),
+        });
+        print("Yeni market ve tahsilat bilgisi eklendi.");
+      }
+    });
+  }
+
 
 // Belirli bir market ismine göre veri getirme
   Future<DagitimModel?> getMarketByName(
@@ -208,7 +228,6 @@ class DagitimService {
         var selectedMarket = markets.firstWhere(
           (market) => market.name == marketName,
         );
-        
 
         if (selectedMarket != null) {
           return DagitimModel(market: [selectedMarket]);
