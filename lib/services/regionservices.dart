@@ -5,18 +5,15 @@ class RegionService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Tüm bölgeleri çekmek için
-  Future<List<RegionModel>> getRegions(String rolsId) async {
+  Future<List<RegionModel>> getRegions() async {
     try {
-      var querySnapshot = await _firestore
-          .collection('rols')
-          .doc(rolsId)
-          .collection("region")
-          .get();
+      var querySnapshot =
+          await FirebaseFirestore.instance.collection('region').get();
 
       print("Koleksiyondan alınan belgeler: ${querySnapshot.docs.length}");
 
       List<RegionModel> regions = querySnapshot.docs.map((doc) {
-        print("Belgelerin verisi: ${doc.data()}"); // Aldığınız veriyi kontrol edin
+        print("Belgelerin verisi: ${doc.data()}"); // Veriyi kontrol etmek için
         return RegionModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
 
@@ -26,75 +23,70 @@ class RegionService {
       return [];
     }
   }
-// Method to get region names based on rolsId
-  Future<List<String>> getRegionNames(String rolsId) async {
-    try {
-      QuerySnapshot querySnapshot = await _firestore
-          .collection('rols')
-          .doc(rolsId)
-          .collection("market")
-          .where('region_name', isEqualTo: "Samandıra")
-          .get();
 
-      // Extracting the region names from the query result
-      List<String> regionNames = querySnapshot.docs
-          .map((doc) => doc['region_name'] as String)
-          .toList();
-
-      return regionNames;
-    } catch (e) {
-      print("Error fetching region names: $e");
-      return [];
-    }
-  }
-  // Tek bir bölgeyi çekmek için
-  Future<RegionModel?> getRegionData(String rolsId, String regionId) async {
+  Future<RegionModel?> getRegionByName(String regionName) async {
     try {
-      var snapshot = await _firestore
-          .collection('rols')
-          .doc(rolsId)
+      // Firestore'dan region adını al
+      final querySnapshot = await FirebaseFirestore.instance
           .collection('region')
-          .doc(regionId)
-          .get();
-
-      if (snapshot.exists) {
-        var region = RegionModel.fromJson(snapshot.data()!);
-        print("Bölge Adı: ${region.regionName}"); // Bölge adını yazdırır
-        return region;
-      }
-    } catch (e) {
-      print("Region verileri alınırken hata oluştu: $e");
-    }
-    return null;
-  }
-
-  // Tüm bölgelerin isimlerini yazdırmak için
-  Future<void> printRegionNames(String rolsId) async {
-    List<RegionModel> regions = await getRegions(rolsId);
-    
-    for (var region in regions) {
-      print("Bölge Adı: ${region.regionName}"); // Region Name'i yazdırır
-    }
-  }
-    Future<RegionModel?> getRegionsData(String rolsId, String regionName) async {
-    try {
-      // /rols/1/market/market isimli belgenin içinde region name'e göre filtreleme yapıyoruz
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
-          .collection('rols')
-          .doc(rolsId)
-          .collection('market')
           .where('region_name', isEqualTo: regionName)
           .get();
 
-      // Verilerin mevcut olup olmadığını kontrol et
-      if (querySnapshot.docs.isNotEmpty) {
-        // İlk belgeyi alarak RegionModel’e dönüştür
-        var data = querySnapshot.docs.first.data();
-        return RegionModel.fromJson(data);  // RegionModel'in uygun bir fromMap metodu olması gerekir.
+      if (querySnapshot.docs.isEmpty) {
+        print("Region with name $regionName not found.");
+        return null;
       }
+
+      // İlk belgeyi al
+      var data = querySnapshot.docs.first.data();
+
+      // Tüm marketleri içeren RegionModel döndür
+      var region = RegionModel.fromJson(data);
+
+      return region;
     } catch (e) {
-      print("Hata oluştu: $e");
+      print("Error: $e");
+      return null;
     }
-    return null;
+  }
+
+  Future<List<Map<String, dynamic>>> getMarketsByRegionName(
+      String regionName) async {
+    List<Map<String, dynamic>> regionData = [];
+
+    try {
+      // Belirtilen `region_name`e göre belgeyi bul
+      var regionSnapshot = await _firestore
+          .collection('region')
+          .where('region_name', isEqualTo: regionName)
+          .get();
+
+      if (regionSnapshot.docs.isNotEmpty) {
+        // İlk belgeyi al (örneğin, `region_name` benzersiz olarak varsayılırsa)
+        var regionDoc = regionSnapshot.docs.first;
+
+        // Tüm veriyi al (market ve diğer alanlar)
+        var data = regionDoc.data();
+
+        // `market` verisini almak
+        var marketArray = data['market'] as List?;
+        if (marketArray != null) {
+          // Her bir marketin verisini almak
+          for (var market in marketArray) {
+            // Market adı (anahtar) ile marketin detaylarını al
+            market.forEach((marketName, marketDetails) {
+              regionData.add({
+                marketName: marketDetails,
+              });
+            });
+          }
+        }
+      }
+
+      return regionData;
+    } catch (e) {
+      print("Veri erişilirken hata oluştu: $e");
+      return [];
+    }
   }
 }

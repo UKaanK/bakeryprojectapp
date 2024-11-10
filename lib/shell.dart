@@ -820,7 +820,12 @@ import 'package:fl_chart/fl_chart.dart';
 class ShellPage extends StatefulWidget {
   final UserModel userModel;
   final String marketIsim;
-  const ShellPage({super.key, required this.userModel,required this.marketIsim});
+  final String servis;
+  const ShellPage(
+      {super.key,
+      required this.userModel,
+      required this.marketIsim,
+      required this.servis});
 
   @override
   _ShellPageState createState() => _ShellPageState();
@@ -850,20 +855,21 @@ class _ShellPageState extends State<ShellPage> {
 
   Future<void> _fetchDagitimData() async {
     setState(() {
-    isLoading = true;
-  });
+      isLoading = true;
+    });
 
-  // Örnek roleId ve tarih verilerini burada kullanıyoruz
-  final roleId = widget.userModel.rolsId;
-  final tarih = "6.11.2024";
-  final marketIsim = widget.marketIsim;  // ShellPage'e gelen market ismi
+    // Örnek roleId ve tarih verilerini burada kullanıyoruz
+    final roleId = widget.userModel.rolsId;
+    final tarih = "6.11.2024";
+    final marketIsim = widget.marketIsim; // ShellPage'e gelen market ismi
 
-  // Veri çekme işlemi
-  dagitimModel = await _dagitimService.getMarketByName(roleId, tarih, marketIsim);
+    // Veri çekme işlemi
+    dagitimModel =
+        await _dagitimService.getMarketByName(roleId, tarih, marketIsim);
 
-  setState(() {
-    isLoading = false;
-  });
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void _showConfirmationDialog(BuildContext context) {
@@ -919,8 +925,19 @@ class _ShellPageState extends State<ShellPage> {
     );
   }
 
-  void _addBread() {
-    setState(() {
+  void _addBread() async {
+    
+    print(widget.servis);
+
+    // updateMarketEkmek'i çağırarak dağıtılan ekmek miktarını güncelleyin
+    await _dagitimService.updateMarketEkmek(
+        widget.userModel.rolsId,
+        widget.marketIsim, // Güncellenen marketin adı
+        _ekmekController.text, // Güncellenen dağıtılan ekmek miktarı
+        // İade ekmek miktarı (örneğin 0 olarak belirlenmiş),
+        widget.servis);
+
+        setState(() {
       int girilenEkmek = int.tryParse(_ekmekController.text) ?? 0;
       if (girilenEkmek > 0 && aractakiEkmek > 0) {
         dagitilanEkmek += girilenEkmek;
@@ -1087,11 +1104,10 @@ class _ShellPageState extends State<ShellPage> {
                                 ElevatedButton(
                                   onPressed: () {
                                     setState(() {
-                                      iadeMiktari =
-                                          int.tryParse(_iadeController.text) ??
-                                              0;
-                                      aractakiEkmek += iadeMiktari;
-                                      _iadeController.clear();
+                                      _dagitimService.updateMarketIadeEkmek(
+                                          widget.userModel.rolsId,
+                                          widget.marketIsim,
+                                          _iadeController.text);
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -1149,10 +1165,10 @@ class _ShellPageState extends State<ShellPage> {
                                 ElevatedButton(
                                   onPressed: () {
                                     setState(() {
-                                      tahsilatMiktari = int.tryParse(
-                                              _tahsilatController.text) ??
-                                          0;
-                                      _tahsilatController.clear();
+                                      _dagitimService.saveOrUpdateTahsilat(
+                                          widget.userModel.rolsId,
+                                          widget.marketIsim,
+                                          _tahsilatController.text);
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(

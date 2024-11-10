@@ -6,7 +6,6 @@ import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
 import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:flutter/material.dart';
 
-
 class BakeryAdminRegionScreen extends StatefulWidget {
   final UserModel userModel;
   const BakeryAdminRegionScreen({super.key, required this.userModel});
@@ -28,8 +27,7 @@ class _BakeryAdminRegionScreenState extends State<BakeryAdminRegionScreen> {
 
   // Verileri çekme ve güncelleme fonksiyonu
   void fetchRegions() async {
-    List<RegionModel> regions =
-        await _regionService.getRegions(widget.userModel.rolsId);
+    List<RegionModel> regions = await _regionService.getRegions();
     setState(() {
       regionNames = regions.map((region) => region.regionName).toList();
     });
@@ -38,7 +36,11 @@ class _BakeryAdminRegionScreenState extends State<BakeryAdminRegionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Bölgeler"),centerTitle: true,automaticallyImplyLeading: true,),
+      appBar: AppBar(
+        title: Text("Bölgeler"),
+        centerTitle: true,
+        automaticallyImplyLeading: true,
+      ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ListView.builder(
@@ -47,18 +49,17 @@ class _BakeryAdminRegionScreenState extends State<BakeryAdminRegionScreen> {
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Column(
-                children: [
-                  customButton2(context, "${regionNames[index]}" , (){
-                     Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BakeryAdminReportsScreen(regionId: regionNames[index],rolsId: widget.userModel.rolsId,),
-                  ),
-                     ); }
-                  ) 
-                ,]
-              ),
+              child: Column(children: [
+                customButton2(context, "${regionNames[index]}", () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BakeryAdminReportsScreen(
+                          regionName: regionNames[index]),
+                    ),
+                  );
+                }),
+              ]),
             );
           },
         ),

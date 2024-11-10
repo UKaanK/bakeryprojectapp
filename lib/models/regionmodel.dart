@@ -6,9 +6,20 @@ class MarketModel {
 
   factory MarketModel.fromJson(Map<String, dynamic> json) {
     String marketName = json.keys.first; // İlk anahtar market adı
-    Map<String, String> marketServices =
-        Map<String, String>.from(json[marketName] as Map<dynamic, dynamic>);
-    return MarketModel(name: marketName, services: marketServices);
+    // marketName ile ilişkili verileri al
+    var marketServices = json[marketName] as Map<String, dynamic>;
+
+    // Sadece String türünde verileri alıp dönüştür
+    Map<String, String> services = {};
+    marketServices.forEach((key, value) {
+      if (value is String) {
+        services[key] = value;
+      } else {
+        services[key] = value.toString(); // Diğer türleri String'e dönüştür
+      }
+    });
+
+    return MarketModel(name: marketName, services: services);
   }
 
   Map<String, dynamic> toJson() {
@@ -20,8 +31,8 @@ class MarketModel {
 
 class RegionModel {
   String regionName;
-  String rolsId;
-  List<MarketModel> market;
+  final List<dynamic> rolsId;
+  final List<MarketModel> market;
 
   RegionModel(
       {required this.regionName, required this.market, required this.rolsId});
@@ -41,7 +52,10 @@ class RegionModel {
         : []; // Eğer market null ise boş bir liste döndür
 
     return RegionModel(
-        regionName: regionName, market: markets, rolsId: json['rols_id']);
+      regionName: regionName,
+      market: markets,
+      rolsId: List<dynamic>.from(json['rols_id'] ?? []),
+    );
   }
 
   Map<String, dynamic> toJson() {

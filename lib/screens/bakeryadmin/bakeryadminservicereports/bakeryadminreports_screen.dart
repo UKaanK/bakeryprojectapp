@@ -20,8 +20,6 @@
 
 //   List<String> columns = ['Market', 'Toplam'];
 //   List<List<String>> rows = [];
-  
-  
 
 //   @override
 //   void initState() {
@@ -118,8 +116,6 @@
 //   }
 // }
 
-
-
 // /*
 // import 'package:bakeryprojectapp/models/regionmodel.dart';
 // import 'package:bakeryprojectapp/services/regionservices.dart';
@@ -181,7 +177,7 @@
 //           });
 //           totalRow.add(columnTotal.toString());
 //         }
-        
+
 //         // En sağdaki genel toplamı hesapla
 //         int grandTotal = rows.fold(0, (sum, row) => sum + (int.tryParse(row.last) ?? 0));
 //         totalRow.add(grandTotal.toString()); // Genel toplamı ekle
@@ -253,25 +249,18 @@
 //   }
 // }
 
-
-
-
-
-
-
-import 'package:bakeryprojectapp/models/regionmodel.dart';
 import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
 import 'package:flutter/material.dart';
 
 class BakeryAdminReportsScreen extends StatefulWidget {
-  final String rolsId;
-  final String regionId;
+  final String regionName; // Bölge ismini widget'a ekleyelim
 
-  const BakeryAdminReportsScreen({super.key, required this.rolsId, required this.regionId});
+  const BakeryAdminReportsScreen({super.key, required this.regionName});
 
   @override
-  State<BakeryAdminReportsScreen> createState() => _BakeryAdminReportsScreenState();
+  State<BakeryAdminReportsScreen> createState() =>
+      _BakeryAdminReportsScreenState();
 }
 
 class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
@@ -284,43 +273,56 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
     fetchRegionData();
   }
 
+  // Bölgeye ait verileri almak için servis çağrısı
   void fetchRegionData() async {
-    RegionModel? regionData = await _regionService.getRegionData(widget.rolsId, widget.regionId);
+    // Verileri çek
+    List<Map<String, dynamic>> markets =
+        await _regionService.getMarketsByRegionName(widget.regionName);
 
-    if (regionData != null) {
-      setState(() {
-        marketData = regionData.market.map((market) {
-          Map<String, int> services = {};
+    setState(() {
+      // `marketData`'yı düzenle
+      marketData = markets.map((market) {
+        // Her market için hizmet verilerini al
+        Map<String, int> services = {};
 
-          // Her hizmeti ayrı ayrı kaydet
-          market.services.forEach((key, value) {
-            int serviceValue = int.tryParse(value.toString()) ?? 0;
-            services[key] = serviceValue;
-          });
+        // Her bir market için veriyi kontrol et
+        market.forEach((marketName, marketDetails) {
+          if (marketDetails is Map<String, dynamic>) {
+            marketDetails.forEach((key, value) {
+              // Değerlerin sayısal olduğunu doğrula ve ekle
+              services[key] = int.tryParse(value.toString()) ?? 0;
+            });
+          }
+        });
 
-          return {
-            'marketName': market.name,
-            'services': services,
-          };
-        }).toList();
-      });
-    }
+        return {
+          'marketName': market.keys.first, // Market adı
+          'services': services, // Hizmet verileri
+        };
+      }).toList();
+    });
   }
 
+  // Bir marketin toplam hizmet değerini hesaplama
   int calculateMarketTotal(Map<String, int> services) {
-    // Belirli bir marketteki tüm hizmetlerin toplamını hesapla
     return services.values.fold(0, (sum, value) => sum + value);
   }
 
+  // Genel toplamı hesapla
   int calculateGeneralTotal() {
-    // marketData'daki tüm marketlerin hizmet toplamlarını hesapla
-    return marketData.fold(0, (sum, market) => sum + calculateMarketTotal(market['services'] as Map<String, int>));
+    return marketData.fold(
+        0,
+        (sum, market) =>
+            sum + calculateMarketTotal(market['services'] as Map<String, int>));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: bakeryappbar(automaticallyImplyLeading: true,title: Text(widget.regionId)),
+      appBar: bakeryappbar(
+        automaticallyImplyLeading: true,
+        title: Text(widget.regionName),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -332,7 +334,8 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
                       itemCount: marketData.length,
                       itemBuilder: (context, index) {
                         final data = marketData[index];
-                        final marketTotal = calculateMarketTotal(data['services'] as Map<String, int>);
+                        final marketTotal = calculateMarketTotal(
+                            data['services'] as Map<String, int>);
 
                         return Card(
                           elevation: 5,
@@ -346,7 +349,8 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
@@ -374,17 +378,25 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
                                 ),
                                 SizedBox(height: 10),
                                 Column(
-                                  children: (data['services'] as Map<String, int>).entries.map((entry) {
+                                  children:
+                                      (data['services'] as Map<String, int>)
+                                          .entries
+                                          .map((entry) {
                                     return Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           entry.key,
-                                          style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey.shade700),
                                         ),
                                         Text(
                                           entry.value.toString(),
-                                          style: TextStyle(fontSize: 16, color: Colors.grey.shade900),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey.shade900),
                                         ),
                                       ],
                                     );
@@ -392,7 +404,8 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
                                 ),
                                 Divider(),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
@@ -453,7 +466,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
                     ),
                   ),
                   Text(
-                    calculateGeneralTotal().toString(), // Dinamik olarak genel toplamı hesapla
+                    calculateGeneralTotal().toString(),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -469,6 +482,3 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
     );
   }
 }
-
-
-

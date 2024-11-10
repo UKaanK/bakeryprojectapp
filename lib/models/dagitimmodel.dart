@@ -19,7 +19,7 @@ class Market {
   final int aractakiEkmek;
   final int dagitilanEkmek;
   final int iadeEkmek;
-  final int tahsilat;
+   int tahsilat;
   final int totalEkmek;
   final Map<String, dynamic>
       services; // Burada String yerine dynamic kullanmalısınız
@@ -52,7 +52,14 @@ class Market {
 
   Map<String, dynamic> toJson() {
     return {
-      name: services,
+       name: {
+        'aractaki_ekmek': aractakiEkmek,
+        'dagitilan_ekmek': dagitilanEkmek,
+        'iade_ekmek': iadeEkmek,
+        'tahsilat': tahsilat,
+        'total_ekmek': totalEkmek,
+        ...services,
+      }
     };
   }
 }
