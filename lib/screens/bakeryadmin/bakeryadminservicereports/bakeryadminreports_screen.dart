@@ -277,7 +277,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
   void fetchRegionData() async {
     // Verileri çek
     List<Map<String, dynamic>> markets =
-        await _regionService.getMarketsByRegionName(widget.regionName);
+        await _regionService.getMarketsByRegionNameAndExactDate(widget.regionName,DateTime(2024,11,6));
 
     setState(() {
       // `marketData`'yı düzenle
