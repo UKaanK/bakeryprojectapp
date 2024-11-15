@@ -50,43 +50,42 @@ class RegionService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getMarketsByRegionName(
-      String regionName) async {
-    List<Map<String, dynamic>> regionData = [];
+  Future<List<Map<String, dynamic>>> getMarketsByRegionNameAndExactDate(
+    String regionName, DateTime targetDate) async {
+  List<Map<String, dynamic>> filteredMarkets = [];
 
-    try {
-      // Belirtilen `region_name`e göre belgeyi bul
-      var regionSnapshot = await _firestore
-          .collection('region')
-          .where('region_name', isEqualTo: regionName)
-          .get();
+  try {
+    // region_name ile eşleşen belgeyi Firestore'dan al
+    var regionSnapshot = await FirebaseFirestore.instance
+        .collection('region')
+        .where('region_name', isEqualTo: regionName)
+        .get();
 
-      if (regionSnapshot.docs.isNotEmpty) {
-        // İlk belgeyi al (örneğin, `region_name` benzersiz olarak varsayılırsa)
-        var regionDoc = regionSnapshot.docs.first;
+    if (regionSnapshot.docs.isNotEmpty) {
+      var regionDoc = regionSnapshot.docs.first;
+      var data = regionDoc.data();
+      var marketArray = data['market'] as List?;
 
-        // Tüm veriyi al (market ve diğer alanlar)
-        var data = regionDoc.data();
+      if (marketArray != null) {
+        // Her market elemanını dolaşarak belirtilen tarihe göre filtrele
+        for (var market in marketArray) {
+          market.forEach((marketName, marketDetails) {
+            var marketDate = DateTime.parse(marketDetails['date']);
 
-        // `market` verisini almak
-        var marketArray = data['market'] as List?;
-        if (marketArray != null) {
-          // Her bir marketin verisini almak
-          for (var market in marketArray) {
-            // Market adı (anahtar) ile marketin detaylarını al
-            market.forEach((marketName, marketDetails) {
-              regionData.add({
-                marketName: marketDetails,
-              });
-            });
-          }
+            // Tarih tam olarak targetDate ile eşleşiyorsa listeye ekle
+            if (marketDate.year == targetDate.year &&
+                marketDate.month == targetDate.month &&
+                marketDate.day == targetDate.day) {
+              filteredMarkets.add({marketName: marketDetails});
+            }
+          });
         }
       }
-
-      return regionData;
-    } catch (e) {
-      print("Veri erişilirken hata oluştu: $e");
-      return [];
     }
+    return filteredMarkets;
+  } catch (e) {
+    print("Veri erişilirken hata oluştu: $e");
+    return [];
   }
+}
 }
