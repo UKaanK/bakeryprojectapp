@@ -26,4 +26,6 @@ class BakeryServices {
       return [];
     }
   }
+
+  getBakeriesByDate(String format) {}
 }
