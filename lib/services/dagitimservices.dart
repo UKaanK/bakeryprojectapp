@@ -96,12 +96,8 @@ class DagitimService {
   }
 
   // updateMarketIadeEkmek (ekleyerek güncelleme)
-  Future<void> updateMarketIadeEkmek(
-    String roleId,
-    String marketName,
-    String iadeEkmek,
-    String todayDate
-  ) async {
+  Future<void> updateMarketIadeEkmek(String roleId, String marketName,
+      String iadeEkmek, String todayDate) async {
     DocumentReference documentRef = _firestore
         .collection('rols')
         .doc(roleId)
@@ -120,12 +116,11 @@ class DagitimService {
           if (market.keys.first == marketName) {
             var currentMarket = market[marketName];
             int currentIadeEkmek = currentMarket['iade_ekmek'] ?? 0;
-            int totalEkmek=currentMarket['total_ekmek'];
+            int totalEkmek = currentMarket['total_ekmek'];
             currentMarket['iade_ekmek'] =
                 currentIadeEkmek + int.parse(iadeEkmek);
             marketFound = true;
-            currentMarket['total_ekmek'] =totalEkmek - int.parse(iadeEkmek); 
-
+            currentMarket['total_ekmek'] = totalEkmek - int.parse(iadeEkmek);
           }
           updatedMarkets.add(market);
         }
@@ -157,8 +152,8 @@ class DagitimService {
   }
 
   // saveOrUpdateTahsilat (ekleyerek güncelleme)
-  Future<void> saveOrUpdateTahsilat(
-      String rolsId, String marketName, String newTahsilat,String todayDate) async {
+  Future<void> saveOrUpdateTahsilat(String rolsId, String marketName,
+      String newTahsilat, String todayDate) async {
     DocumentReference documentRef = _firestore
         .collection('rols')
         .doc(rolsId)
