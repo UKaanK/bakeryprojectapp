@@ -853,6 +853,8 @@ class _ShellPageState extends State<ShellPage> {
     _fetchDagitimData();
   }
 
+  final tarih = DateFormat('dd.MM.yyyy').format(DateTime.now());
+
   Future<void> _fetchDagitimData() async {
     setState(() {
       isLoading = true;
@@ -860,9 +862,9 @@ class _ShellPageState extends State<ShellPage> {
 
     // Örnek roleId ve tarih verilerini burada kullanıyoruz
     final roleId = widget.userModel.rolsId;
-    final tarih = "6.11.2024";
+    final tarih = DateFormat('dd.MM.yyyy').format(DateTime.now());
     final marketIsim = widget.marketIsim; // ShellPage'e gelen market ismi
-
+    print(tarih);
     // Veri çekme işlemi
     dagitimModel =
         await _dagitimService.getMarketByName(roleId, tarih, marketIsim);
@@ -926,7 +928,6 @@ class _ShellPageState extends State<ShellPage> {
   }
 
   void _addBread() async {
-    
     print(widget.servis);
 
     // updateMarketEkmek'i çağırarak dağıtılan ekmek miktarını güncelleyin
@@ -935,9 +936,10 @@ class _ShellPageState extends State<ShellPage> {
         widget.marketIsim, // Güncellenen marketin adı
         _ekmekController.text, // Güncellenen dağıtılan ekmek miktarı
         // İade ekmek miktarı (örneğin 0 olarak belirlenmiş),
-        widget.servis);
+        widget.servis,
+        tarih);
 
-        setState(() {
+    setState(() {
       int girilenEkmek = int.tryParse(_ekmekController.text) ?? 0;
       if (girilenEkmek > 0 && aractakiEkmek > 0) {
         dagitilanEkmek += girilenEkmek;
@@ -1107,7 +1109,8 @@ class _ShellPageState extends State<ShellPage> {
                                       _dagitimService.updateMarketIadeEkmek(
                                           widget.userModel.rolsId,
                                           widget.marketIsim,
-                                          _iadeController.text);
+                                          _iadeController.text,
+                                          tarih);
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -1168,7 +1171,8 @@ class _ShellPageState extends State<ShellPage> {
                                       _dagitimService.saveOrUpdateTahsilat(
                                           widget.userModel.rolsId,
                                           widget.marketIsim,
-                                          _tahsilatController.text);
+                                          _tahsilatController.text,
+                                          tarih);
                                     });
                                   },
                                   style: ElevatedButton.styleFrom(

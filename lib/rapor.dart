@@ -228,8 +228,6 @@ class _RaporPageState extends State<RaporPage> {
 
 */
 
-
-
 /*
 
 import 'package:bakeryprojectapp/models/dagitimmodel.dart';
@@ -485,7 +483,6 @@ class _RaporPageState extends State<RaporPage> {
 
 */
 
-
 import 'package:bakeryprojectapp/models/dagitimmodel.dart';
 import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/services/dagitimservices.dart';
@@ -532,11 +529,16 @@ class _RaporPageState extends State<RaporPage> {
         marketData = regionData.market.map((market) {
           Map<String, int> services = {};
 
-          services['total_ekmek'] = int.tryParse(market.services['total_ekmek'].toString()) ?? 0;
-          services['iade_ekmek'] = int.tryParse(market.services['iade_ekmek'].toString()) ?? 0;
-          services['dagitilan_ekmek'] = int.tryParse(market.services['dagitilan_ekmek'].toString()) ?? 0;
-          services['aractaki_ekmek'] = int.tryParse(market.services['aractaki_ekmek'].toString()) ?? 0;
-          services['tahsilat'] = int.tryParse(market.services['tahsilat'].toString()) ?? 0;
+          services['total_ekmek'] =
+              int.tryParse(market.services['total_ekmek'].toString()) ?? 0;
+          services['iade_ekmek'] =
+              int.tryParse(market.services['iade_ekmek'].toString()) ?? 0;
+          services['dagitilan_ekmek'] =
+              int.tryParse(market.services['dagitilan_ekmek'].toString()) ?? 0;
+          services['aractaki_ekmek'] =
+              int.tryParse(market.services['aractaki_ekmek'].toString()) ?? 0;
+          services['tahsilat'] =
+              int.tryParse(market.services['tahsilat'].toString()) ?? 0;
 
           market.services.forEach((key, value) {
             if (!services.containsKey(key)) {
@@ -556,7 +558,8 @@ class _RaporPageState extends State<RaporPage> {
   int calculateDagitilanEkmekTotal() {
     return marketData.fold(
       0,
-      (sum, market) => sum + ((market['services']?['dagitilan_ekmek'] ?? 0) as int),
+      (sum, market) =>
+          sum + ((market['services']?['dagitilan_ekmek'] ?? 0) as int),
     );
   }
 
@@ -604,9 +607,10 @@ class _RaporPageState extends State<RaporPage> {
                         final marketTotal = calculateMarketTotal(
                             data['services'] as Map<String, int>);
 
-                        final sortedServices = (data['services'] as Map<String, int>?)
-                            ?.entries
-                            .toList();
+                        final sortedServices =
+                            (data['services'] as Map<String, int>?)
+                                ?.entries
+                                .toList();
 
                         sortedServices?.sort((a, b) => a.key.compareTo(b.key));
 
@@ -622,7 +626,8 @@ class _RaporPageState extends State<RaporPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
@@ -673,7 +678,8 @@ class _RaporPageState extends State<RaporPage> {
                                 ),
                                 const Divider(),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Row(
                                       children: [
@@ -711,7 +717,8 @@ class _RaporPageState extends State<RaporPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -721,11 +728,14 @@ class _RaporPageState extends State<RaporPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    _buildInfoRow(Icons.local_shipping, "Dağıtılan Ekmek", calculateDagitilanEkmekTotal(), Colors.blue),
+                    _buildInfoRow(Icons.local_shipping, "Dağıtılan Ekmek",
+                        calculateDagitilanEkmekTotal(), Colors.blue),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.assignment_return, "İade Ekmek", calculateIadeEkmekTotal(), Colors.red),
+                    _buildInfoRow(Icons.assignment_return, "İade Ekmek",
+                        calculateIadeEkmekTotal(), Colors.red),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.money, "Tahsilat", calculateTahsilatTotal(), Colors.green),
+                    _buildInfoRow(Icons.money, "Tahsilat",
+                        calculateTahsilatTotal(), Colors.green),
                   ],
                 ),
               ),
@@ -734,8 +744,7 @@ class _RaporPageState extends State<RaporPage> {
           Card(
             color: const Color.fromARGB(255, 78, 214, 255),
             margin: const EdgeInsets.all(0),
-            shape: const RoundedRectangleBorder(             
-            ),
+            shape: const RoundedRectangleBorder(),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -766,7 +775,8 @@ class _RaporPageState extends State<RaporPage> {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, int value, Color iconColor) {
+  Widget _buildInfoRow(
+      IconData icon, String label, int value, Color iconColor) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
