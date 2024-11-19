@@ -197,10 +197,6 @@ class _BakeryAdminProductionScreenState
 
 */
 
-
-
-
-
 /*
 import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/models/bakerymodel.dart';
@@ -453,7 +449,6 @@ class _BakeryAdminProductionScreenState
 
 */
 
-
 import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/models/bakerymodel.dart';
 import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminproduction/bakeryadminproductionorder_screen.dart';
@@ -476,7 +471,8 @@ class _BakeryAdminProductionScreenState
     extends State<BakeryAdminProductionScreen> {
   final BakeryServices _bakeryServices = BakeryServices();
   List<BakeryModel> bakeryList = [];
-  Map<String, List<BakeryModel>> groupedBakeries = {}; // Bölgelere göre gruplama
+  Map<String, List<BakeryModel>> groupedBakeries =
+      {}; // Bölgelere göre gruplama
   String selectedBolge = ''; // Seçilen bölge
   late Future<void> _bakeryDataFuture;
   DateTime selectedDate = DateTime.now();
@@ -531,7 +527,8 @@ class _BakeryAdminProductionScreenState
     }
   }
 
-  Widget customButton(BuildContext context, String text, VoidCallback onPressed) {
+  Widget customButton(
+      BuildContext context, String text, VoidCallback onPressed) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -545,7 +542,8 @@ class _BakeryAdminProductionScreenState
           height: screenHeight * 0.08,
           decoration: BoxDecoration(
             color: Colors.blueAccent,
-            borderRadius: BorderRadius.circular(screenWidth * 0.1), // Yuvarlatılmış köşeler
+            borderRadius: BorderRadius.circular(
+                screenWidth * 0.1), // Yuvarlatılmış köşeler
             boxShadow: [
               BoxShadow(
                 color: Colors.blueAccent.withOpacity(0.3),
@@ -649,7 +647,8 @@ class _BakeryAdminProductionScreenState
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text("Bir hata oluştu: ${snapshot.error}"));
+                  return Center(
+                      child: Text("Bir hata oluştu: ${snapshot.error}"));
                 } else if (!snapshot.hasData || selectedBolge.isEmpty) {
                   return Center(child: Text("Veri bulunamadı."));
                 } else {
@@ -658,7 +657,8 @@ class _BakeryAdminProductionScreenState
                     itemBuilder: (context, index) {
                       var bakery = groupedBakeries[selectedBolge]![index];
                       return Card(
-                        margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                        margin: EdgeInsets.symmetric(
+                            vertical: 12.0, horizontal: 16.0),
                         child: Padding(
                           padding: EdgeInsets.all(16.0),
                           child: Column(
@@ -667,8 +667,7 @@ class _BakeryAdminProductionScreenState
                               Text(
                                 bakery.firinIsmi,
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16),
+                                    fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               SizedBox(height: 8),
                               Text(
@@ -696,7 +695,9 @@ class _BakeryAdminProductionScreenState
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => BakeryAdminProductionOrderScreen()),
+                  builder: (context) => BakeryAdminProductionOrderScreen(
+                        userModel: widget.userModel,
+                      )),
             );
           },
         ),
