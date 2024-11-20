@@ -114,8 +114,17 @@ class _BakeryAdminProductionOrderScreenState
 
 */
 
+
+
+
+
+
+/*
+
+
 import 'package:bakeryprojectapp/models/bakerymodel.dart';
 import 'package:bakeryprojectapp/models/usermodel.dart';
+import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminproduction/bakeryadminproduction_screen.dart';
 import 'package:bakeryprojectapp/services/bakeryservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
 import 'package:flutter/material.dart';
@@ -165,7 +174,7 @@ class _BakeryAdminProductionOrderScreenState
     }
   }
 
-  DateTime dateTime = DateTime(2024, 10, 26, 15, 14);
+  DateTime dateTime = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +286,9 @@ class _BakeryAdminProductionOrderScreenState
                           "${dateTime.day}.${dateTime.month}.${dateTime.year}",
                           bakery['ekmekSayisi'].text, // Access the text value of each specific controller
                         );
-                      });
+                      }
+                      
+                      );      
                     },
                     child: Container(
                       alignment: Alignment.center,
@@ -317,3 +328,262 @@ class _BakeryAdminProductionOrderScreenState
   }
 }
 
+
+
+
+
+
+
+
+
+*/
+
+
+
+import 'package:bakeryprojectapp/models/bakerymodel.dart';
+import 'package:bakeryprojectapp/models/usermodel.dart';
+import 'package:bakeryprojectapp/services/bakeryservices.dart';
+import 'package:flutter/material.dart';
+
+class BakeryAdminProductionOrderScreen extends StatefulWidget {
+  final UserModel userModel;
+  const BakeryAdminProductionOrderScreen({super.key, required this.userModel});
+
+  @override
+  State<BakeryAdminProductionOrderScreen> createState() =>
+      _BakeryAdminProductionOrderScreenState();
+}
+
+class _BakeryAdminProductionOrderScreenState
+    extends State<BakeryAdminProductionOrderScreen> {
+  final BakeryServices _bakeryServices = BakeryServices();
+  List<BakeryModel> bakeryList = [];
+  List<Map<String, dynamic>> firinsatir = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBakeryData();
+  }
+
+  Future<void> fetchBakeryData() async {
+    try {
+      var bakeries =
+          await _bakeryServices.getAllBakeries(widget.userModel.rolsId);
+
+      if (bakeries == null || bakeries.isEmpty) {
+        throw Exception("Fırın verileri bulunamadı.");
+      }
+
+      setState(() {
+        bakeryList = bakeries;
+        firinsatir = bakeryList.map((bakery) {
+          return {
+            'firinIsmi': bakery.firinIsmi,
+            'ekmekSayisi': TextEditingController(),
+          };
+        }).toList();
+      });
+    } catch (e) {
+      print("Hata: $e");
+    }
+  }
+
+  DateTime dateTime = DateTime.now();
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Emin misiniz?"),
+          content: Text("Girilen emirleri göndermek istediğinize emin misiniz?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Onay ekranını kapat
+              },
+              child: Text("İptal"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Onay ekranını kapat
+                _submitOrders(); // Emirleri gönder
+              },
+              child: Text("Evet"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _submitOrders() {
+    try {
+      firinsatir.forEach((bakery) {
+        _bakeryServices.updateEkmekSayisi(
+          widget.userModel.rolsId,
+          bakery['firinIsmi'],
+          "${dateTime.day}.${dateTime.month}.${dateTime.year}",
+          bakery['ekmekSayisi'].text,
+        );
+      });
+
+      // İşlem başarılı olduğunda kısa bir mesaj göster
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Veri başarıyla gönderildi!"),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      // Hata durumunda mesaj göster
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Veri gönderilirken bir hata oluştu."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("${dateTime.day}.${dateTime.month}.${dateTime.year}"),
+        centerTitle: true,
+      ),
+      body: firinsatir.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: firinsatir.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        elevation: 5,
+                        margin: EdgeInsets.symmetric(
+                          vertical: screenHeight * 0.01,
+                          horizontal: screenWidth * 0.04,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              screenWidth * 0.05),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(screenWidth * 0.04),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.local_fire_department,
+                                        color: Colors.orangeAccent,
+                                        size: screenWidth * 0.06,
+                                      ),
+                                      SizedBox(width: screenWidth * 0.02),
+                                      Text(
+                                        firinsatir[index]['firinIsmi'],
+                                        style: TextStyle(
+                                          fontSize: screenWidth * 0.05,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blueAccent,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: screenWidth * 0.25,
+                                    child: TextField(
+                                      controller: firinsatir[index]
+                                          ['ekmekSayisi'],
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                        hintText: 'Üretim',
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide(
+                                            color: Colors.grey.shade400,
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide(
+                                            color: Colors.blueAccent,
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: screenHeight * 0.01,
+                                          horizontal: screenWidth * 0.02,
+                                        ),
+                                      ),
+                                      style: TextStyle(
+                                          fontSize: screenWidth * 0.04),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.03),
+                  child: GestureDetector(
+                    onTap: () {
+                      _showConfirmationDialog(context);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: screenWidth * 0.6,
+                      height: screenHeight * 0.08,
+                      decoration: BoxDecoration(
+                        color: Colors.blueAccent,
+                        borderRadius:
+                            BorderRadius.circular(screenWidth * 0.1),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blueAccent.withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Emir Gir",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: screenWidth * 0.06,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}

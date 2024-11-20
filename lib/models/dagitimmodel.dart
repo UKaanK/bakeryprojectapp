@@ -16,9 +16,9 @@ class DagitimModel {
 
 class Market {
   final String name;
-  final int aractakiEkmek;
-  final int dagitilanEkmek;
-  final int iadeEkmek;
+  late final int aractakiEkmek;
+  late final int dagitilanEkmek;
+  late final int iadeEkmek;
    int tahsilat;
   final int totalEkmek;
   final Map<String, dynamic>
@@ -49,6 +49,8 @@ class Market {
       totalEkmek: marketData['total_ekmek'] ?? 0,
     );
   }
+
+  set aractaki_ekmek(int aractaki_ekmek) {}
 
   Map<String, dynamic> toJson() {
     return {

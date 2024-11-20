@@ -810,6 +810,12 @@ class GraphPage extends StatelessWidget {
 
 */
 
+
+
+
+
+/*
+
 import 'package:bakeryprojectapp/models/dagitimmodel.dart';
 import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/services/dagitimservices.dart';
@@ -839,9 +845,9 @@ class _ShellPageState extends State<ShellPage> {
   DagitimModel? dagitimModel;
   bool isLoading = false;
 
-  int toplamEkmek = 300;
+  int toplamEkmek = 0;
   int dagitilanEkmek = 0;
-  int aractakiEkmek = 300;
+  int aractakiEkmek = 600;
   int iadeMiktari = 0;
   int tahsilatMiktari = 0;
 
@@ -1052,7 +1058,7 @@ class _ShellPageState extends State<ShellPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Dağıtılan ekmek: $dagitilanEkmek",
+                                    "Dağıtılan ekmek: ${market.dagitilanEkmek}",
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold),
@@ -1313,3 +1319,419 @@ class GraphPage extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+*/
+
+
+
+import 'package:bakeryprojectapp/models/dagitimmodel.dart';
+import 'package:bakeryprojectapp/models/usermodel.dart';
+import 'package:bakeryprojectapp/services/dagitimservices.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+class ShellPage extends StatefulWidget {
+  final UserModel userModel;
+  final String marketIsim;
+  final String servis;
+
+  const ShellPage({
+    super.key,
+    required this.userModel,
+    required this.marketIsim,
+    required this.servis,
+  });
+
+  @override
+  _ShellPageState createState() => _ShellPageState();
+}
+
+class _ShellPageState extends State<ShellPage> {
+  final TextEditingController _ekmekController = TextEditingController();
+  final TextEditingController _iadeController = TextEditingController();
+  final TextEditingController _tahsilatController = TextEditingController();
+  final DagitimService _dagitimService = DagitimService();
+
+  DagitimModel? dagitimModel;
+  bool isLoading = false;
+
+  final String tarih = DateFormat('dd.MM.yyyy').format(DateTime.now());
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDagitimData();
+  }
+
+  Future<void> _fetchDagitimData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      dagitimModel = await _dagitimService.getMarketByName(
+        widget.userModel.rolsId,
+        tarih,
+        widget.marketIsim,
+      );
+    } catch (e) {
+      print("Veri çekme hatası: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Veri çekme işlemi başarısız!")),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _addBread() async {
+    final girilenEkmek = int.tryParse(_ekmekController.text) ?? 0;
+    if (girilenEkmek <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Geçerli bir ekmek miktarı girin!")),
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      await _dagitimService.updateMarketEkmek(
+        widget.userModel.rolsId,
+        widget.marketIsim,
+        _ekmekController.text,
+        widget.servis,
+        tarih,
+      );
+
+      await _fetchDagitimData(); // Güncellenmiş verileri alarak ekranı yenile
+      _ekmekController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Ekmek güncellemesi başarılı!")),
+      );
+    } catch (e) {
+      print("Ekmek güncelleme hatası: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Ekmek güncelleme işlemi başarısız!")),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _updateIade() async {
+    final iade = int.tryParse(_iadeController.text) ?? 0;
+    if (iade < 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Geçerli bir iade miktarı girin!")),
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      await _dagitimService.updateMarketIadeEkmek(
+        widget.userModel.rolsId,
+        widget.marketIsim,
+        _iadeController.text,
+        tarih,
+      );
+
+      await _fetchDagitimData(); // Güncellenmiş verileri alarak ekranı yenile
+      _iadeController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("İade işlemi başarılı!")),
+      );
+    } catch (e) {
+      print("İade güncelleme hatası: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("İade işlemi başarısız!")),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _updateTahsilat() async {
+    final tahsilat = int.tryParse(_tahsilatController.text) ?? 0;
+    if (tahsilat < 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Geçerli bir tahsilat miktarı girin!")),
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      await _dagitimService.saveOrUpdateTahsilat(
+        widget.userModel.rolsId,
+        widget.marketIsim,
+        _tahsilatController.text,
+        tarih,
+      );
+
+      await _fetchDagitimData(); // Güncellenmiş verileri alarak ekranı yenile
+      _tahsilatController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Tahsilat işlemi başarılı!")),
+      );
+    } catch (e) {
+      print("Tahsilat güncelleme hatası: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Tahsilat işlemi başarısız!")),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.marketIsim, style: TextStyle(fontSize: 30)),
+      ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : dagitimModel != null && dagitimModel!.market.isNotEmpty
+              ? SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Text(
+                            formattedDate,
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                       
+                        SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Text(
+                              "EKMEK:",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(                  
+                              child: TextField(
+                                controller: _ekmekController,
+                                keyboardType: TextInputType.number,
+                               decoration: InputDecoration(
+                                      hintText: '0',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black, width: 1.5),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.blue, width: 1.5),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                               ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            ElevatedButton(
+                              
+                              onPressed: _addBread,
+
+                              style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 18, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "GİR",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                             
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Text(
+                              "İADE:    ",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: _iadeController,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                      hintText: '0',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black, width: 1.5),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.blue, width: 1.5),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: _updateIade,
+                              style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 18, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "İADE",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Text(
+                              "TAHSİLAT:",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: _tahsilatController,
+                                keyboardType: TextInputType.number,
+                               decoration: InputDecoration(
+                                      hintText: '0',
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.black, width: 1.5),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.blue, width: 1.5),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                               ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: _updateTahsilat,
+                             style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 18, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "GİR",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                            ),
+
+
+
+                          ],
+                        ),
+                         
+
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40),
+                          child: Center(
+                            child: Container(
+                                
+                                padding: EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  border: Border.all(color: Colors.blue, width: 1.5),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Dağıtılan ekmek: ${dagitimModel!.market[0].dagitilanEkmek ?? 0}",
+                                      style: TextStyle(
+                                          fontSize: 18, fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      "Araçtaki ekmek: ${dagitimModel!.market[0].aractakiEkmek ?? 0}",
+                                      style: TextStyle(
+                                          fontSize: 18, fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      "İade edilen ekmek: ${dagitimModel!.market[0].iadeEkmek ?? 0}",
+                                      style: TextStyle(
+                                          fontSize: 18, fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      "Tahsilat: ${dagitimModel!.market[0].tahsilat ?? 0}",
+                                      style: TextStyle(
+                                          fontSize: 18, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Center(child: Text("Veri bulunamadı.")),
+    );
+  }
+}
+
+

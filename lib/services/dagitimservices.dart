@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bakeryprojectapp/models/dagitimmodel.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +20,7 @@ class DagitimService {
       if (snapshot.exists) {
         // Veriyi JSON formatında almak
         var data = snapshot.data();
-        print(data);
+        print("<s"+data.toString());
         // Burada json verisini DagitimModel'e çevireceğiz
         return DagitimModel.fromJson(data!);
       } else {
@@ -247,3 +248,7 @@ class DagitimService {
     }
   }
 }
+
+
+
+
