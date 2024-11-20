@@ -249,8 +249,6 @@
 //   }
 // }
 
-
-
 /*
 
 
@@ -499,6 +497,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
 
 */
 
+import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
 import 'package:flutter/material.dart';
@@ -506,8 +505,10 @@ import 'package:intl/intl.dart'; // Tarih formatlama için gerekli
 
 class BakeryAdminReportsScreen extends StatefulWidget {
   final String regionName; // Bölge ismini widget'a ekleyelim
+  final UserModel userModel;
 
-  const BakeryAdminReportsScreen({super.key, required this.regionName});
+  const BakeryAdminReportsScreen(
+      {super.key, required this.regionName, required this.userModel});
 
   @override
   State<BakeryAdminReportsScreen> createState() =>
@@ -547,7 +548,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
   void fetchRegionData() async {
     try {
       List<Map<String, dynamic>> markets = await _regionService
-          .getMarketsByRegionNameAndExactDate(widget.regionName, selectedDate);
+          .getMarketsByRegionNameAndDate(widget.regionName, selectedDate);
 
       setState(() {
         marketData = markets.map((market) {
@@ -569,6 +570,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
             'services': services,
           };
         }).toList();
+        print(markets);
         isLoading = false; // Veri yüklendi
       });
     } catch (e) {
@@ -605,14 +607,16 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center, // Ortada konumlandırma
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Ortada konumlandırma
               children: [
                 GestureDetector(
                   onTap: () => _selectDate(context),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.blue, // Mavi arka plan
-                      borderRadius: BorderRadius.circular(12), // Yuvarlatılmış köşeler
+                      borderRadius:
+                          BorderRadius.circular(12), // Yuvarlatılmış köşeler
                       boxShadow: [
                         BoxShadow(
                           color: Colors.blue.withOpacity(0.4),
@@ -625,14 +629,19 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        
                         Icon(
                           Icons.calendar_today,
                           color: Colors.white,
                           size: 20,
                         ),
                         SizedBox(width: 8),
-                        Text("Seçilen Tarih :  " , style: TextStyle(fontSize: 16, color: Colors.white , fontWeight: FontWeight.bold),),
+                        Text(
+                          "Seçilen Tarih :  ",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
                         Text(
                           DateFormat('yyyy-MM-dd').format(selectedDate),
                           style: TextStyle(
@@ -650,7 +659,8 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
           ),
           Expanded(
             child: isLoading
-                ? Center(child: CircularProgressIndicator()) // Yükleniyor ekranı
+                ? Center(
+                    child: CircularProgressIndicator()) // Yükleniyor ekranı
                 : marketData.isEmpty
                     ? Center(
                         child: Text(
@@ -708,10 +718,10 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
                                     ),
                                     SizedBox(height: 10),
                                     Column(
-                                      children: (data['services']
-                                              as Map<String, int>)
-                                          .entries
-                                          .map((entry) {
+                                      children:
+                                          (data['services'] as Map<String, int>)
+                                              .entries
+                                              .map((entry) {
                                         return Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,

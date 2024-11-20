@@ -55,7 +55,7 @@ class _BakeryAdminRegionScreenState extends State<BakeryAdminRegionScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => BakeryAdminReportsScreen(
-                          regionName: regionNames[index]),
+                          regionName: regionNames[index],userModel:widget.userModel),
                     ),
                   );
                 }),
