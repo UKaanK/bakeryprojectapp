@@ -160,6 +160,7 @@ class _BakeryAdminProductionOrderScreenState
           };
         }).toList();
       });
+      print(firinsatir);
     } catch (e) {
       print("Hata: $e");
     }

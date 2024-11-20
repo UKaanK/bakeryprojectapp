@@ -50,42 +50,65 @@ class RegionService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getMarketsByRegionNameAndExactDate(
-    String regionName, DateTime targetDate) async {
-  List<Map<String, dynamic>> filteredMarkets = [];
+ Future<List<Map<String, dynamic>>> getMarketsByRegionNameAndDate(
+      String regionName, DateTime targetDate) async {
+    List<Map<String, dynamic>> filteredMarkets = [];
 
-  try {
-    // region_name ile eşleşen belgeyi Firestore'dan al
-    var regionSnapshot = await FirebaseFirestore.instance
-        .collection('region')
-        .where('region_name', isEqualTo: regionName)
-        .get();
+    try {
+      // rols koleksiyonundaki belgeleri al
+      var rolsSnapshot =
+          await FirebaseFirestore.instance.collection('rols').get();
 
-    if (regionSnapshot.docs.isNotEmpty) {
-      var regionDoc = regionSnapshot.docs.first;
-      var data = regionDoc.data();
-      var marketArray = data['market'] as List?;
+      // rols koleksiyonundaki her belgeyi kontrol et
+      for (var rolsDoc in rolsSnapshot.docs) {
+        // dagitim koleksiyonunu al
+        var dagitimSnapshot =
+            await rolsDoc.reference.collection("dagitim").get();
 
-      if (marketArray != null) {
-        // Her market elemanını dolaşarak belirtilen tarihe göre filtrele
-        for (var market in marketArray) {
-          market.forEach((marketName, marketDetails) {
-            var marketDate = DateTime.parse(marketDetails['date']);
+        // dagitim koleksiyonundaki her bir belgeyi kontrol et
+        for (var element in dagitimSnapshot.docs) {
+          var data = element.data();
 
-            // Tarih tam olarak targetDate ile eşleşiyorsa listeye ekle
-            if (marketDate.year == targetDate.year &&
-                marketDate.month == targetDate.month &&
-                marketDate.day == targetDate.day) {
-              filteredMarkets.add({marketName: marketDetails});
+          // Belge ID'sini kullanarak `region_name`'ı al
+          var region = data['region_name'];
+
+          // Eğer belge `region_name` ile eşleşiyorsa
+          if (region == regionName) {
+            // Belge ID'sindeki tarihi DateTime'a dönüştür
+            var marketDateString = element.id;
+            var marketDateParts = marketDateString.split('.');
+            if (marketDateParts.length == 3) {
+              int day = int.parse(marketDateParts[0]);
+              int month = int.parse(marketDateParts[1]);
+              int year = int.parse(marketDateParts[2]);
+
+              var marketDate = DateTime(year, month, day);
+
+              // targetDate ile karşılaştır
+              if (marketDate.year == targetDate.year &&
+                  marketDate.month == targetDate.month &&
+                  marketDate.day == targetDate.day) {
+                // Eğer tarih eşleşiyorsa, market verilerini al
+                var marketArray = data['market'] as List?;
+
+                if (marketArray != null) {
+                  // market verilerini listeye ekle
+                  for (var market in marketArray) {
+                    market.forEach((marketName, marketDetails) {
+                      filteredMarkets.add({marketName: marketDetails});
+                    });
+                  }
+                }
+              }
             }
-          });
+          }
         }
       }
+
+      return filteredMarkets;
+    } catch (e) {
+      print("Veri erişilirken hata oluştu: $e");
+      return [];
     }
-    return filteredMarkets;
-  } catch (e) {
-    print("Veri erişilirken hata oluştu: $e");
-    return [];
   }
-}
 }
