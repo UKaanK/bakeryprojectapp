@@ -33,7 +33,7 @@ class BakeryServices {
       .doc(rolsId)
       .collection('bakery')
       .doc(firinIsmi);
-
+try {
   await _firestore.runTransaction((transaction) async {
     DocumentSnapshot snapshot = await transaction.get(documentRef);
 
@@ -76,6 +76,10 @@ class BakeryServices {
       print("Fırın bulunamadı: $firinIsmi");
     }
   });
+} catch (e) {
+  print(e);
+}
+  
 }
 
 }
