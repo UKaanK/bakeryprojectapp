@@ -5,6 +5,7 @@ import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
 import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BakeryAdminRegionScreen extends StatefulWidget {
   final UserModel userModel;
@@ -37,7 +38,11 @@ class _BakeryAdminRegionScreenState extends State<BakeryAdminRegionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Bölgeler"),
+        title: Text("Bölgeler" , style:GoogleFonts.cambo(
+    fontSize: 35,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  ),),
         centerTitle: true,
         automaticallyImplyLeading: true,
       ),

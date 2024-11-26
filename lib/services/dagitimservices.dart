@@ -63,6 +63,9 @@ class DagitimService {
             currentMarket['total_ekmek'] =
                 currentEkmek + int.parse(dagitilanEkmek);
 
+                 currentMarket['aractaki_ekmek'] =
+                currentMarket['aractaki_ekmek']  - int.parse(dagitilanEkmek);
+
             marketFound = true;
           }
           updatedMarkets.add(market);

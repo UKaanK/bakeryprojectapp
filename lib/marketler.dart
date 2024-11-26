@@ -2,6 +2,7 @@ import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/shell.dart';
 import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 // Özel düğme widget'ını içe aktarıyor
 // Shell sayfasını içe aktarıyor
 
@@ -15,9 +16,13 @@ class MarketPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title:  Text(
           "MARKETLER", // AppBar başlığı
-          style: TextStyle(fontSize: 40),
+          style:GoogleFonts.cambo(
+    fontSize: 35,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  ),
         ),
         iconTheme: const IconThemeData(
           color: Colors.blue, // İkon rengi mavi

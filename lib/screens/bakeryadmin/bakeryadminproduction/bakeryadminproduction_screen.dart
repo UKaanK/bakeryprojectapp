@@ -722,6 +722,7 @@ import 'package:bakeryprojectapp/screens/bakeryadmin/bakeryadminproduction/baker
 import 'package:bakeryprojectapp/services/bakeryservices.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class BakeryAdminProductionScreen extends StatefulWidget {
@@ -838,7 +839,11 @@ class _BakeryAdminProductionScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Üretim Ekranı"),
+        title: Text("Üretim Ekranı" , style:GoogleFonts.cambo(
+    fontSize: 35,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  ),),
         automaticallyImplyLeading: true,
         actions: [
           IconButton(

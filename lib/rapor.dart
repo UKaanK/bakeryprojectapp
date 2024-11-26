@@ -821,6 +821,7 @@ import 'package:bakeryprojectapp/models/dagitimmodel.dart';
 import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/services/dagitimservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RaporPage extends StatefulWidget {
   final UserModel userModel;
@@ -900,7 +901,11 @@ class _RaporPageState extends State<RaporPage> {
     return Scaffold(
       appBar: bakeryappbar(
         automaticallyImplyLeading: true,
-        title: const Text("Raporlar"),
+        title:  Text("Raporlar" , style:GoogleFonts.cambo(
+    fontSize: 35,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  ),),
       ),
       body: Column(
         children: [

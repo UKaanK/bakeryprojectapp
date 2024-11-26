@@ -95,6 +95,7 @@ import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
 import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
   final UserModel userModel;
@@ -127,7 +128,11 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("ANASAYFA" , style: TextStyle(fontSize: 40),),
+            Text("ANASAYFA" , style:GoogleFonts.cambo(
+    fontSize: 35,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  ),),
           ],
         ),
       ),

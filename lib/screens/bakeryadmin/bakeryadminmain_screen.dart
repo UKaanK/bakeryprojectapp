@@ -8,6 +8,8 @@ import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 class BakeryAdminScreen extends StatefulWidget {
   final UserModel userModel;
@@ -35,7 +37,7 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
     super.initState();
     print(widget.userModel.rolsId);
   }
-
+//abhayaLibre ,  alata
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,11 @@ class _BakeryAdminScreenScreenState extends State<BakeryAdminScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-            "ANASAYFA"
+            "ANASAYFA" , style:GoogleFonts.cambo(
+    fontSize: 35,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  ),
             ),
            
           ],

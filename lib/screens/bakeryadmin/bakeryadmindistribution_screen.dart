@@ -249,6 +249,7 @@ import 'package:bakeryprojectapp/models/bakerymodel.dart';
 import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/services/bakeryservices.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class BakeryAdminDistributionScreen extends StatefulWidget {
@@ -323,7 +324,11 @@ class _BakeryAdminDistributionScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dağıtım Ekranı"),
+        title: Text("Dağıtım Ekranı" , style:GoogleFonts.cambo(
+    fontSize: 35,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  ),),
         centerTitle: true,
       ),
       body: Column(

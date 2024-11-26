@@ -1,6 +1,7 @@
 import 'package:bakeryprojectapp/marketler.dart';
 import 'package:bakeryprojectapp/utilits/widgets/button.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'models/usermodel.dart';
 
@@ -16,9 +17,13 @@ class ServisPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'SERVİS',
-          style: TextStyle(fontSize: 40),
+         style:GoogleFonts.cambo(
+    fontSize: 35,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  ),
         ),
         iconTheme: const IconThemeData(
           color: Colors.blue,

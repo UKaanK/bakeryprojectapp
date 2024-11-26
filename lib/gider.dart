@@ -1,6 +1,7 @@
 import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/services/driverservices.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class GiderPage extends StatefulWidget {
   final UserModel userModel;
@@ -77,7 +78,11 @@ class _GiderPageState extends State<GiderPage> {
       appBar: AppBar(
         title: Text(
           "GİDER",
-          style: TextStyle(fontSize: 40),
+          style:GoogleFonts.cambo(
+    fontSize: 35,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue,
+  ),
         ),
         iconTheme: IconThemeData(color: Colors.blue, size: 30),
       ),
