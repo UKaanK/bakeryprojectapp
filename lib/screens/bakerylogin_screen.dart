@@ -350,11 +350,7 @@ class _BakeryLoginScreenState extends State<BakeryLoginScreen> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.local_pizza, // Alternatif olarak kahverengi tema uyumlu ikon
-                color: Colors.brown,
-                size: 60,
-              ),
+             Image.asset("assets/images/ekmak.png"),
               const Text(
                 "Fırına Hoş Geldiniz!",
                 style: TextStyle(
