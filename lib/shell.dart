@@ -2318,7 +2318,7 @@ class _ShellPageState extends State<ShellPage> {
       appBar: AppBar(
         title: Text(
           widget.marketIsim,
-          style: GoogleFonts.cambo(
+          style: GoogleFonts.aDLaMDisplay(
             fontSize: 35,
             fontWeight: FontWeight.bold,
             color: Colors.white,

@@ -495,20 +495,22 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
 
 
 
-*/
-
+*/import 'package:flutter/material.dart';
 import 'package:bakeryprojectapp/models/usermodel.dart';
 import 'package:bakeryprojectapp/services/regionservices.dart';
 import 'package:bakeryprojectapp/utilits/widgets/bakeryappbar.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Tarih formatlama için gerekli
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class BakeryAdminReportsScreen extends StatefulWidget {
   final String regionName; // Bölge ismini widget'a ekleyelim
   final UserModel userModel;
 
-  const BakeryAdminReportsScreen(
-      {super.key, required this.regionName, required this.userModel});
+  const BakeryAdminReportsScreen({
+    super.key,
+    required this.regionName,
+    required this.userModel,
+  });
 
   @override
   State<BakeryAdminReportsScreen> createState() =>
@@ -518,8 +520,16 @@ class BakeryAdminReportsScreen extends StatefulWidget {
 class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
   final RegionService _regionService = RegionService();
   List<Map<String, dynamic>> marketData = [];
-  DateTime selectedDate = DateTime.now(); // Varsayılan olarak bugünkü tarih
+  DateTime selectedDate = DateTime.now(); // Varsayılan tarih
   bool isLoading = true; // Veriler yükleniyor mu?
+
+  final Map<String, String> serviceNames = {
+    'total_ekmek': 'Total Ekmek',
+    'iade_ekmek': 'İade Ekmek',
+    'dagitilan_ekmek': 'Dağıtılan Ekmek',
+    'aractaki_ekmek': 'Araçtaki Ekmek',
+    'tahsilat': 'Tahsilat',
+  };
 
   @override
   void initState() {
@@ -532,8 +542,8 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      firstDate: DateTime(2022),
+      lastDate: DateTime(2030),
     );
     if (pickedDate != null && pickedDate != selectedDate) {
       setState(() {
@@ -570,7 +580,6 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
             'services': services,
           };
         }).toList();
-        print(markets);
         isLoading = false; // Veri yüklendi
       });
     } catch (e) {
@@ -599,58 +608,36 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
     return Scaffold(
       appBar: bakeryappbar(
         automaticallyImplyLeading: true,
-        title: Text(widget.regionName),
+        title: Text(
+          widget.regionName,
+          style: GoogleFonts.abrilFatface(
+            fontSize: 35,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue,
+          ),
+        ),
       ),
       body: Column(
         children: [
-          // Tarih seçici butonu
+          // Tarih Seçici
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.center, // Ortada konumlandırma
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GestureDetector(
-                  onTap: () => _selectDate(context),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue, // Mavi arka plan
-                      borderRadius:
-                          BorderRadius.circular(12), // Yuvarlatılmış köşeler
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.blue.withOpacity(0.4),
-                          blurRadius: 10,
-                          offset: Offset(0, 4), // Hafif gölge efekti
-                        ),
-                      ],
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.calendar_today,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          "Seçilen Tarih :  ",
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          DateFormat('yyyy-MM-dd').format(selectedDate),
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white, // Beyaz metin
-                          ),
-                        ),
-                      ],
+                ElevatedButton.icon(
+                  onPressed: () => _selectDate(context),
+                  icon: const Icon(Icons.calendar_today, color: Colors.white),
+                  label: Text(
+                    "Seçilen Tarih : ${DateFormat('dd.MM.yyyy').format(selectedDate)}",
+                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue, // Mavi renk
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
@@ -658,114 +645,102 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
             ),
           ),
           Expanded(
-            child: isLoading
-                ? Center(
-                    child: CircularProgressIndicator()) // Yükleniyor ekranı
-                : marketData.isEmpty
-                    ? Center(
-                        child: Text(
-                          'Seçilen tarih için veri bulunamadı.',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: ListView.builder(
-                          itemCount: marketData.length,
-                          itemBuilder: (context, index) {
-                            final data = marketData[index];
-                            final marketTotal = calculateMarketTotal(
-                                data['services'] as Map<String, int>);
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: marketData.length,
+                      itemBuilder: (context, index) {
+                        final data = marketData[index];
+                        final marketTotal = calculateMarketTotal(
+                            data['services'] as Map<String, int>);
 
-                            return Card(
-                              elevation: 5,
-                              margin: EdgeInsets.symmetric(vertical: 8),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                        final sortedServices =
+                            (data['services'] as Map<String, int>)
+                                .entries
+                                .toList();
+
+                        sortedServices.sort((a, b) => a.key.compareTo(b.key));
+
+                        return Card(
+                          elevation: 5,
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.store,
-                                              color: Colors.blueAccent,
-                                              size: 22,
-                                            ),
-                                            SizedBox(width: 8),
-                                            Text(
-                                              data['marketName'],
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blueAccent,
-                                              ),
-                                            ),
-                                          ],
+                                        const Icon(
+                                          Icons.store,
+                                          color: Colors.blue,
+                                          size: 22,
                                         ),
-                                        Icon(
-                                          Icons.arrow_drop_down_circle,
-                                          color: Colors.grey.shade400,
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          data['marketName'],
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue,
+                                          ),
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 10),
-                                    Column(
-                                      children:
-                                          (data['services'] as Map<String, int>)
-                                              .entries
-                                              .map((entry) {
-                                        return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              entry.key,
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.grey.shade700),
-                                            ),
-                                            Text(
-                                              entry.value.toString(),
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.grey.shade900),
-                                            ),
-                                          ],
-                                        );
-                                      }).toList(),
+                                    Icon(
+                                      Icons.arrow_drop_down_circle,
+                                      color: const Color.fromARGB(
+                                          255, 162, 196, 250),
                                     ),
-                                    Divider(),
-                                    Row(
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Column(
+                                  children: sortedServices.map((entry) {
+                                    return Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.attach_money,
-                                              color: Colors.green,
-                                              size: 20,
-                                            ),
-                                            Text(
-                                              'Toplam',
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                            ),
-                                          ],
+                                        Text(
+                                          serviceNames[entry.key] ??
+                                              'Servis ${entry.key}',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey.shade700),
                                         ),
                                         Text(
-                                          marketTotal.toString(),
+                                          entry.value.toString(),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey.shade900),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ),
+                                const Divider(),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Row(
+                                      children: [
+                                        Icon(
+                                          Icons.attach_money,
+                                          color: Colors.green,
+                                          size: 20,
+                                        ),
+                                        Text(
+                                          'Toplam',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -774,30 +749,59 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
                                         ),
                                       ],
                                     ),
+                                    Text(
+                                      marketTotal.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
                                   ],
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
           ),
-          // Genel toplam göstergesi
-          Card(
-            color: Color.fromARGB(255, 78, 214, 255),
-            margin: EdgeInsets.all(0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    _buildInfoRow(Icons.local_shipping, "Dağıtılan Ekmek",
+                        calculateDagitilanEkmekTotal(), Colors.blue),
+                    const SizedBox(height: 8),
+                    _buildInfoRow(Icons.assignment_return, "İade Ekmek",
+                        calculateIadeEkmekTotal(), Colors.red),
+                    const SizedBox(height: 8),
+                    _buildInfoRow(Icons.money, "Tahsilat",
+                        calculateTahsilatTotal(), Colors.green),
+                  ],
+                ),
               ),
             ),
+          ),
+          Card(
+            color: const Color.fromARGB(255, 78, 214, 255),
+            margin: const EdgeInsets.all(0),
+            shape: const RoundedRectangleBorder(),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Genel Toplam',
                     style: TextStyle(
                       fontSize: 20,
@@ -807,7 +811,7 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
                   ),
                   Text(
                     calculateGeneralTotal().toString(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -819,6 +823,51 @@ class _BakeryAdminReportsScreenState extends State<BakeryAdminReportsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  int calculateDagitilanEkmekTotal() {
+    return marketData.fold(
+      0,
+      (sum, market) =>
+          sum + ((market['services']?['dagitilan_ekmek'] ?? 0) as int),
+    );
+  }
+
+  int calculateIadeEkmekTotal() {
+    return marketData.fold(
+      0,
+      (sum, market) => sum + ((market['services']?['iade_ekmek'] ?? 0) as int),
+    );
+  }
+
+  int calculateTahsilatTotal() {
+    return marketData.fold(
+      0,
+      (sum, market) => sum + ((market['services']?['tahsilat'] ?? 0) as int),
+    );
+  }
+
+  Widget _buildInfoRow(
+      IconData icon, String label, int value, Color iconColor) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: iconColor, size: 24),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        Text(
+          value.toString(),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }

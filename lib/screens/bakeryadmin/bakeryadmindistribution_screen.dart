@@ -324,7 +324,7 @@ class _BakeryAdminDistributionScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dağıtım Ekranı" , style:GoogleFonts.cambo(
+        title: Text("Dagıtım Ekranı" , style:GoogleFonts.aDLaMDisplay(
     fontSize: 35,
     fontWeight: FontWeight.bold,
     color: Colors.blue,

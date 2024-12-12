@@ -78,7 +78,7 @@ class _GiderPageState extends State<GiderPage> {
       appBar: AppBar(
         title: Text(
           "GİDER",
-          style:GoogleFonts.cambo(
+          style:GoogleFonts.aDLaMDisplay(
     fontSize: 35,
     fontWeight: FontWeight.bold,
     color: Colors.blue,

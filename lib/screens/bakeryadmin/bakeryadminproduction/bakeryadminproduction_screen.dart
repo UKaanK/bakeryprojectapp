@@ -839,7 +839,7 @@ class _BakeryAdminProductionScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Üretim Ekranı" , style:GoogleFonts.cambo(
+        title: Text("Üretim Ekranı" , style:GoogleFonts.aDLaMDisplay(
     fontSize: 35,
     fontWeight: FontWeight.bold,
     color: Colors.blue,

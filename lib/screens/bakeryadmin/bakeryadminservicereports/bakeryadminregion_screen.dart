@@ -38,7 +38,7 @@ class _BakeryAdminRegionScreenState extends State<BakeryAdminRegionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Bölgeler" , style:GoogleFonts.cambo(
+        title: Text("Bölgeler" , style:GoogleFonts.aDLaMDisplay(
     fontSize: 35,
     fontWeight: FontWeight.bold,
     color: Colors.blue,

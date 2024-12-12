@@ -19,7 +19,7 @@ class ServisPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'SERVİS',
-         style:GoogleFonts.cambo(
+         style:GoogleFonts.aDLaMDisplay(
     fontSize: 35,
     fontWeight: FontWeight.bold,
     color: Colors.blue,
